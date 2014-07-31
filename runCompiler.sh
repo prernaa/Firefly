@@ -36,7 +36,7 @@ then
 	
 	if [ $compile = 1 ]
 	then
-		cppCompile.sh $filename.cpp
+		./cppCompile.sh $filename.cpp
 	else
 		:
 	fi
