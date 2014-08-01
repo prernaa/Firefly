@@ -1,7 +1,7 @@
 OCAMLBUILD = ocamlbuild
 
 all: 
-	$(OCAMLBUILD) firefly3D.byte
+	$(OCAMLBUILD) -no-hygiene firefly3D.byte
 
 clean:
 	$(OCAMLBUILD) -clean
