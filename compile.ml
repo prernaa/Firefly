@@ -64,28 +64,27 @@ let initCppFile = function
 							
 							int main(int argc, char** argv)
 							{
+								cout << \"Hello!\" << endl;
 								glutInit(&argc, argv);                 // Initialize GLUT
 								glutCreateWindow(\"OpenGL Setup Test\"); // Create a window with the given title
 								glutInitWindowSize(800, 600);   // Set the window's initial width & height
 								glutInitWindowPosition(80, 80); // Position the window's initial top-left corner
 								glutDisplayFunc(display); // Register display callback handler for window re-paint
 								init();
-								glutMainLoop();           // Enter the infinitely event-processing loop
-								return 0;
-									
-			"
+								glutMainLoop();           // Enter the infinitely event-processing loop"
 										
 		
 let closeCppFile = function
 	_ ->	
-			fprintf oc "\n";
-			fprintf oc "}";
+			fprintf oc "%s\n\n" "\n
+							\n
+							return 0;
+							}";
 			close_out oc
 				
 					
 let translate = function
 	Print ->	initCppFile ();
-				fprintf oc "\tcout << \"Hello!\" << endl;";
 				closeCppFile ()
 
 				

@@ -6,6 +6,7 @@ delete=0
 help=0
 silent=0
 filename=""
+dirname=""
 
 
 Usage()
@@ -57,22 +58,30 @@ if [ $# -eq 1 ] # User supplied one argument, just as expected.
 then
 	
 	filename=${1%.ff}
+	dirname=${1%/*}
+	
+	if [ "$dirname" == "$1" ]
+	then
+		dirname="./"
+	else
+		:
+	fi
 	
 	# Before compiling, delete any pre-existing C++ files (*.cpp, *.obj, etc.) related to source .ff file.
 	DeleteCpp
 	
 	# Compile the source .ff file.
 	./firefly3D.byte < $1
-	mv output.cpp $filename.cpp
+	mv output.cpp "$filename".cpp
 	
 	# If user chose "-c" option, run C++ compiler on Windows and execute the resulting .exe file.
 	if [ $compileWin = 1 ]
 	then
 		if [ $silent = 1 ] 
 		then
-			start //B //WAIT cppCompile.bat $filename.cpp >nul 2>nul
+			start //B //WAIT cppCompile.bat "$filename" >nul 2>nul
 		else
-			start //B //WAIT cppCompile.bat $filename.cpp
+			start //B //WAIT cppCompile.bat "$filename"
 		fi
 	else
 		:

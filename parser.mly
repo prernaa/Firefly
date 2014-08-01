@@ -1,6 +1,7 @@
 %{ open Ast %}
 
 %token PRINT
+%token <int> LITERAL
 %token PLUS
 %token EOF
 
