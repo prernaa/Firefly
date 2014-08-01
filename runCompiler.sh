@@ -7,6 +7,7 @@ help=0
 silent=0
 filename=""
 
+
 Usage()
 {
 	echo "Usage: runCompiler.sh [OPTIONS] file.ff"
