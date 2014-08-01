@@ -16,6 +16,8 @@ let initCppFile = function
 							#  pragma comment(lib, \"opengl32.lib\")  // Compiler-specific directive to avoid manually configuration
 							#  pragma comment(lib, \"glu32.lib\")     // Link libraries
 							#endif			
+
+							using namespace std;
 							
 							void display() {
 							   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque

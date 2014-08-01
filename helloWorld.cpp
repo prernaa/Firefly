@@ -1,13 +1,16 @@
+
 
+							
+
+							#include <iostream>
 							
-							#include <iostream>						
-							#include <GL/glut.h>  // GLUT, includes glu.h and gl.h					
-							
+							#include <GL/glut.h>  // GLUT, includes glu.h and gl.h
+
 							#ifdef _MSC_VER                         // Check if MS Visual C compiler
 							#  pragma comment(lib, "opengl32.lib")  // Compiler-specific directive to avoid manually configuration
 							#  pragma comment(lib, "glu32.lib")     // Link libraries
 							#endif			
-							
+
 							using namespace std;
 							
 							void display() {
