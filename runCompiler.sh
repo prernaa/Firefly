@@ -92,9 +92,11 @@ then
 	then
 		if [ $silent = 1 ] # Place code here to suppress C++ compilation & execution output. Useful for batch testing.
 		then
-			:
+			g++ -w -o "$filename" "$filename".cpp -framework GLUT -framework OpenGL
+            ./"$filename"
 		else
-			:
+            g++ -w -o "$filename" "$filename".cpp -framework GLUT -framework OpenGL
+            ./"$filename"
 		fi
 	else
 		:
