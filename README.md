@@ -19,3 +19,6 @@ Troubleshooting
 2. "ld: symbol(s) not found for architecture x86_64" OR "GL/glut.h" not found, etc
 => Type: "sudo ln /System/Library/Frameworks/OpenGL.framework/Versions/A/Headers/* /usr/local/include/GL"
 		and "sudo ln /System/Library/Frameworks/GLUT.framework/Versions/A/Headers/* /usr/local/include/GL"
+		
+
+For other issues, please contact prerna1@e.ntu.edu.sg
