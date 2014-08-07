@@ -4,6 +4,7 @@
 %token <int> LITERAL
 %token PLUS
 %token EOF
+%token <(int * int)> VEC2
 
 %left PLUS
 
@@ -14,7 +15,9 @@
 
 program:
 	PRINT			{ Print }
+	| expr			{ Exp($1) }
 	
 expr:
     LITERAL          { Literal($1) }
-  | expr PLUS   expr { Binop($1, Add,   $3) }
+	| VEC2	{ Vec2(fst($1),snd($1)) }
+	| expr PLUS   expr { Binop($1, Add,   $3) }

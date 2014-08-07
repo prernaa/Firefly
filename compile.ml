@@ -82,9 +82,15 @@ let closeCppFile = function
 							}";
 			close_out oc
 				
+let eval = function
+	Literal(x) ->	fprintf oc "%s\n\n" ("Value is: " ^ (string_of_int x));
+					close_out oc
+	| Vec2(x,y)	->	fprintf oc "%s\n\n" ("Value is: [" ^ (string_of_int x) ^ "," ^ (string_of_int y) ^ "]");
+					close_out oc
+	| _	->			fprintf oc "%s\n\n" "base case"
 					
 let translate = function
-	Print ->	initCppFile ();
-				closeCppFile ()
+	Print ->		initCppFile ();
+					closeCppFile ()
+	| Exp(x) ->	eval(x)
 
-				
