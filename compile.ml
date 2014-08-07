@@ -87,7 +87,8 @@ let eval = function
 					close_out oc
 	| Vec2(x,y)	->	fprintf oc "%s\n\n" ("Value is: [" ^ (string_of_int x) ^ "," ^ (string_of_int y) ^ "]");
 					close_out oc
-	| _	->			fprintf oc "%s\n\n" "base case"
+	| _	->			fprintf oc "%s\n\n" "base case";
+					close_out oc
 					
 let translate = function
 	Print ->		initCppFile ();
