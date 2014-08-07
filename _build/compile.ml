@@ -83,11 +83,11 @@ let closeCppFile = function
 			close_out oc
 				
 let eval = function
-	  Integer(x) ->	fprintf oc "%s\n\n" ("Integer is: " ^ (string_of_int x));
+	  Integer(x) ->	fprintf oc "%s\n\n" ("Value is: " ^ (string_of_int x));
 					close_out oc
-	| Float(x) ->	fprintf oc "%s\n\n" ("Float is: " ^ (string_of_float x));
+	| Float(x) ->	fprintf oc "%s\n\n" ("Value is: " ^ (string_of_float x));
 					close_out oc 
-	| Vec2(x,y)	->	fprintf oc "%s\n\n" ("Vec2 is: [" ^ (string_of_int x) ^ "," ^ (string_of_int y) ^ "]");
+	| Vec2(x,y)	->	fprintf oc "%s\n\n" ("Value is: [" ^ (string_of_int x) ^ "," ^ (string_of_int y) ^ "]");
 					close_out oc
 	| _	->			fprintf oc "%s\n\n" "base case";
 					close_out oc
