@@ -128,6 +128,9 @@ let rec output_expr = function
 						*)
 			  			(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst onDir) ^","^string_of_float (snd onDir) ^" DIST:"^string_of_float onDist ^ "\";")
 						*)
+			| Off -> let offDist = float_of_string(eval_expr e1) and offDir = norm_tuple_of_vec e2 in 
+			  			let newFirefly = (offDist*.(fst offDir)+.(fst !firefly), offDist*.(snd offDir)+.(snd !firefly)) in 
+						firefly := newFirefly
 			
 			)
 					

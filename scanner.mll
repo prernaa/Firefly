@@ -8,6 +8,7 @@ rule token = parse
 | '-'		{ MINUS }
 | ['0'-'9']+ as lxm 		{ INTEGER(int_of_string lxm) }
 | "on"						{ ON }
+| "off"						{ OFF }
 | "="						{ ASSIGN }
 | flt as lxm 	{ FLOAT(float_of_string lxm) }
 | ('[') ((['-' '+']? ['0'-'9']+ ['.']? ['0'-'9']*) as num1) (',') ((['-' '+']? ['0'-'9']+ ['.']? ['0'-'9']*) as num2) (']') 

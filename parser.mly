@@ -2,13 +2,13 @@
 
 %token <int> INTEGER
 %token <float> FLOAT
-%token ASSIGN PLUS MINUS ON
+%token ASSIGN PLUS MINUS ON OFF
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
  
 %left ASSIGN
-%right ON
+%right ON OFF
 %left PLUS MINUS
 
 %start program
@@ -31,3 +31,4 @@ expr:
   | IDENTIFIER ASSIGN expr				{ Assign ($1, $3)}
   | expr PLUS expr 						{ Binop($1, Add,   $3) }
   | expr ON expr 						{ Binop($1, On,   $3) }
+  | expr OFF expr						{ Binop($1, Off,   $3) }

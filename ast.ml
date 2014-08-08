@@ -1,4 +1,4 @@
-type op = Add | On
+type op = Add | On | Off
 
 type expr =
     Integer of int
