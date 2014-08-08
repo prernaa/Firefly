@@ -15,7 +15,11 @@ let initCppFile = function
 #  pragma comment(lib, \"glu32.lib\")     // Link libraries
 #endif			
 using namespace std;
-void DrawCircle(float cx, float cy, float r, int num_segments)
+struct vec2cpp{
+	float x;
+	float y;
+};
+void DrawAxes()
 {
 	glBegin(GL_LINES);
 		glColor3f(1.0, 0.0, 0.0);
@@ -33,7 +37,7 @@ void display() {
 	// Render a color-cube consisting of 6 quads with different colors
    	glLoadIdentity();                 // Reset the model-view matrix
 
-   	DrawCircle(0.0, 0.0, 0.5, 100);
+   	DrawAxes();
 
   	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
@@ -91,11 +95,16 @@ let tuple_of_vec = function
 let type_to_string = function
 	  Integer(x) ->	"int"	
 	| Float(x) ->	"float"
+	| Vec2(x,y) ->	"vec2cpp"
 	
 let rec eval_expr = function 
-	Integer(x) -> string_of_int x
+	  Integer(x) -> string_of_int x
+	| Float(x)	-> 	string_of_float x
+	
 let rec output_expr = function
 	  Integer(x) ->	fprintf oc "%s" (string_of_int x)	
+	| Float(x) -> fprintf oc "%s" (string_of_float x)
+	| Vec2(x,y)	->	fprintf oc "%s" ("{"^ string_of_float (x+.0.0) ^"," ^ string_of_float (y+.0.0) ^ "}")
 	| Identifier(x) -> fprintf oc "%s" (x);
 	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); output_expr e; fprintf oc "%s" (";\n\t")
 	| Binop(e1, op, e2) ->
@@ -110,6 +119,7 @@ let rec eval = function
 	| Identifier(x) -> fprintf oc "\t%s\n\n" ("cout<<\"Identifier is: " ^ (x) ^"\";")
 	| Assign(v,e)	-> fprintf oc "\t%s\n\n" ("cout<<\"Assigning: " ^ (v) ^"\";")		
 	| Binop(e1, op, e2) ->
+			let v1 = eval e1 and v2 = eval e2 in
 			(match op with
 			  On -> fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^"\";")
 			| Add -> fprintf oc "\t%s\n\n" ("cout<<\"Add is working!"^"\";")
