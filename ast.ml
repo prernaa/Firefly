@@ -1,10 +1,10 @@
-type op = Add 
+type op = Add | On
 
 type expr =
     Integer of int
   | Float of float	
   | Id of string
-  | Vec2 of int * int
+  | Vec2 of float * float
   | Binop of expr * op * expr
 
 type exprs = 

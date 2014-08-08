@@ -85,7 +85,11 @@ let closeCppFile = function
 let rec eval = function
 	  Integer(x) ->	fprintf oc "%s\n\n" ("Integer is: " ^ (string_of_int x))				
 	| Float(x) ->	fprintf oc "%s\n\n" ("Float is: " ^ (string_of_float x))	
-	| Vec2(x,y)	->	fprintf oc "%s\n\n" ("Vec2 is: [" ^ (string_of_int x) ^ "," ^ (string_of_int y) ^ "]")
+	| Vec2(x,y)	->	fprintf oc "%s\n\n" ("Vec2 is: [" ^ (string_of_float x) ^ "," ^ (string_of_float y) ^ "]")
+	| Binop(e1, op, e2) ->
+			let v1 = eval e1 and v2 = eval e2 in
+			(match op with
+			  On -> fprintf oc "%s\n\n" ("ON is working!"))
 	| _	->			fprintf oc "%s\n\n" "base case"
 					
 let translate = function
