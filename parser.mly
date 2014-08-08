@@ -2,11 +2,12 @@
 
 %token <int> INTEGER
 %token <float> FLOAT
-%token PLUS ON
+%token ASSIGN PLUS ON
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
-
+ 
+%left ASSIGN
 %right ON
 %left PLUS
 
@@ -27,5 +28,6 @@ expr:
   |	FLOAT      	 	   					{ Float($1) }
   | VEC2								{ Vec2(fst($1),snd($1)) }
   | IDENTIFIER							{ Identifier($1) }
+  | IDENTIFIER ASSIGN expr				{ Assign ($1, $3)}
   | expr PLUS expr 						{ Binop($1, Add,   $3) }
   | expr ON expr 						{ Binop($1, On,   $3) }

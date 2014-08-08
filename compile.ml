@@ -74,6 +74,7 @@ let rec eval = function
 	| Float(x) ->	fprintf oc "\t%s\n\n" ("cout<<\"Float is: " ^ (string_of_float x)^"\";")
 	| Vec2(x,y)	->	fprintf oc "\t%s\n\n" ("cout<<\"Vec2 is: [" ^ (string_of_float x) ^ "," ^ (string_of_float y) ^ "]" ^ "\";")
 	| Identifier(x) -> fprintf oc "\t%s\n\n" ("cout<<\"Identifier is: " ^ (x) ^"\";")
+	| Assign(v,e)	-> fprintf oc "\t%s\n\n" ("cout<<\"Assign is working!"^"\";")
 	| Binop(e1, op, e2) ->
 			let v1 = eval e1 and v2 = eval e2 in
 			(match op with
