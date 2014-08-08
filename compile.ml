@@ -102,17 +102,31 @@ let norm_tuple_of_vec = function
 						(x /. mag, y/. mag)  (* Vec2(x,y)	->	(x/.(x+.y),y/.(x+.y))	*)
 
 let type_to_string = function
-	  Integer(x) ->	"int"	
-	| Float(x) ->	"float"
+	  Constant(x) ->
+		(match x with
+			  Integer(x) ->	"int"	
+			| Float(x) ->	"float")
+	| NegConstant(x) ->
+		(match x with
+			  Integer(x) ->	"int"	
+			| Float(x) ->	"float")
 	| Vec2(x,y) ->	"vec2cpp"
 	
 let rec eval_expr = function 
-	  Integer(x) -> string_of_int x
-	| Float(x)	-> 	string_of_float x
+	  Constant(x) ->
+		(match x with
+		  Integer(x) -> string_of_int x
+		| Float(x)	-> 	string_of_float x)
+	| NegConstant(x) ->
+		(match x with
+		  Integer(x) -> string_of_int (-x)
+		| Float(x) -> string_of_float (-.x))
 	
-let rec output_expr = function
-	  Integer(x) ->	fprintf oc "%s" (string_of_int x)	
-	| Float(x) -> fprintf oc "%s" (string_of_float x)
+let rec output_expr exp = match exp with
+	  Constant(x) -> let v = eval_expr exp in
+						fprintf oc "%s" v
+	| NegConstant(x) -> let v = eval_expr exp in
+						fprintf oc "%s" v
 	| Vec2(x,y)	->	fprintf oc "%s" ("{"^ string_of_float (x+.0.0) ^"," ^ string_of_float (y+.0.0) ^ "}")
 	| Identifier(x) -> fprintf oc "%s" (x);
 	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); output_expr e; fprintf oc "%s" (";\n\t")
