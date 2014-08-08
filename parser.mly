@@ -5,6 +5,7 @@
 %token PLUS ON
 %token EOF
 %token <(float * float)> VEC2
+%token <string> IDENTIFIER
 
 %right ON
 %left PLUS
@@ -25,5 +26,6 @@ expr:
     INTEGER    							{ Integer($1) }
   |	FLOAT      	 	   					{ Float($1) }
   | VEC2								{ Vec2(fst($1),snd($1)) }
+  | IDENTIFIER							{ Identifier($1) }
   | expr PLUS expr 						{ Binop($1, Add,   $3) }
   | expr ON expr 						{ Binop($1, On,   $3) }

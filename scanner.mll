@@ -9,4 +9,5 @@ rule token = parse
 | ('[') ((['0'-'9']+) as num1) (',') ((['0'-'9']+) as num2) (']') 
 							{ VEC2( (float_of_string num1) , (float_of_string num2) ) }
 | eof { EOF }
+| ['a'-'z' 'A'-'Z']+ ['a'-'z' 'A'-'Z' '0'-'9' '_'] as lxm {IDENTIFIER(lxm)}
 | _ as char 				{ raise (Failure("illegal character " ^ Char.escaped char)) }
