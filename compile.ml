@@ -30,6 +30,7 @@ void DrawAxes()
 		glVertex2f(0.0f, +1.0f);
 	glEnd();
 }
+int myprogram();
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
    	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
@@ -38,6 +39,7 @@ void display() {
    	glLoadIdentity();                 // Reset the model-view matrix
 
    	DrawAxes();
+	myprogram();
 
   	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
@@ -78,7 +80,10 @@ int main(int argc, char** argv)
    	glutDisplayFunc(display);       // Register callback handler for window re-paint event
    	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
    	init();                       // Our own OpenGL initialization
-   	glutMainLoop();                 // Enter the infinite event-processing loop"
+   	glutMainLoop();                 // Enter the infinite event-processing loop
+	return 0;
+}
+int myprogram(){"
 										
 		
 let closeCppFile = function
@@ -87,10 +92,12 @@ let closeCppFile = function
 	return 0;
 }";
 			close_out oc
-let firefly = (0,0)
+let firefly = ref (0.0,0.0);;
 
 let tuple_of_vec = function
-	Vec2(x,y)	->	(x,y)	
+	Vec2(x,y)	->	(x,y)
+let norm_tuple_of_vec = function
+	Vec2(x,y)	->	(x/.(x+.y),y/.(x+.y))	
 
 let type_to_string = function
 	  Integer(x) ->	"int"	
@@ -109,7 +116,17 @@ let rec output_expr = function
 	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); output_expr e; fprintf oc "%s" (";\n\t")
 	| Binop(e1, op, e2) ->
 			(match op with
-			  On -> let v1 = int_of_string(eval_expr e1) and v2 = tuple_of_vec e2 in fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^"\";")
+			  On -> let onDist = float_of_string(eval_expr e1) and onDir = norm_tuple_of_vec e2 in 
+			  			let newFirefly = (onDist*.(fst onDir)+.(fst !firefly), onDist*.(snd onDir)+.(snd !firefly)) in 
+						fprintf oc "\n\t%s" ("glBegin(GL_LINES);\n\tglColor3f(0.0, 0.0, 0.0);");
+						fprintf oc "\n\t%s" ("\tglVertex2f("^string_of_float (fst !firefly) ^"f, "^string_of_float (snd !firefly)^"f);\n\t\tglVertex2f("^string_of_float (fst newFirefly) ^"f, "^string_of_float (snd newFirefly)^"f);");
+						fprintf oc "\n\t%s" ("glEnd();");
+						firefly := newFirefly
+					
+						(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst newFirefly) ^","^string_of_float (snd newFirefly) ^ "\";")
+						*)
+			  			(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst onDir) ^","^string_of_float (snd onDir) ^" DIST:"^string_of_float onDist ^ "\";")
+						*)
 			)
 					
 let translate = function
