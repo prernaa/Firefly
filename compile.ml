@@ -9,56 +9,72 @@ let initCppFile = function
 			fprintf oc "%s\n\n\t" "\n\n
 #include <iostream>
 #include <GL/glut.h>  // GLUT, includes glu.h and gl.h
+#include <math.h>
 #ifdef _MSC_VER                         // Check if MS Visual C compiler
 #  pragma comment(lib, \"opengl32.lib\")  // Compiler-specific directive to avoid manually configuration
 #  pragma comment(lib, \"glu32.lib\")     // Link libraries
 #endif			
 using namespace std;
-void display() {
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set background color to black and opaque
-	glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
-	// Draw a Red 1x1 Square centered at origin
+void DrawCircle(float cx, float cy, float r, int num_segments)
+{
 	glBegin(GL_LINES);
-	//axis'
-	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(10, 0, 0);
-	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 10, 0);
-	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 10);
-	//shape
-	glColor3f(1.0, 1.0, 1.0);
-	int n = 2;
-	for (int i = 0; i < n; i++)
-	{
-		glVertex3f(i*0.1, i*0.1, 0); glVertex3f((i+1)*0.1, (i+1)*0.1, 0);
-		glEnd();
-		glFlush();  // Render now
-	}
+		glColor3f(1.0, 0.0, 0.0);
+		glVertex2f(-1.0f, 0.0f);
+		glVertex2f(+1.0f, 0.0f);
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex2f(0.0f, -1.0f);
+		glVertex2f(0.0f, +1.0f);
+	glEnd();
+}
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+   	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+
+	// Render a color-cube consisting of 6 quads with different colors
+   	glLoadIdentity();                 // Reset the model-view matrix
+
+   	DrawCircle(0.0, 0.0, 0.5, 100);
+
+  	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 }
 void init() {
-	// Set the current clear color to black and the current drawing color to
-	// white.
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glColor3f(0.0, 0.0, 0.0);
-	// Set the camera lens to have a 60 degree (vertical) field of view, an
-	// aspect ratio of 4/3, and have everything closer than 1 unit to the
-	// camera and greater than 40 units distant clipped away.
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(60.0, 4.0/3.0, 1, 40);
-	// Position camera at (4, 6, 5) looking at (0, 0, 0) with the vector
-	// <0, 1, 0> pointing upward.
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(4, 6, 5, 0, 0, 0, 0, 1, 0);
+   	glClearDepth(1.0f);                   // Set background depth to farthest
+   	glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+   	glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+   	glShadeModel(GL_SMOOTH);   // Enable smooth shading
+   	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+}
+void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
+// Compute aspect ratio of the new window
+   if (height == 0) height = 1;                // To prevent divide by 0
+   GLfloat aspect = (GLfloat)width / (GLfloat)height;
+ 
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+ 
+   // Set the aspect ratio of the clipping area to match the viewport
+   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+   glLoadIdentity();
+   if (width >= height) {
+     // aspect >= 1, set the height from -1 to 1, with larger width
+      gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+   } else {
+      // aspect < 1, set the width to -1 to 1, with larger height
+     gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
+   }
 }
 int main(int argc, char** argv)
 {
-	glutInit(&argc, argv);                 // Initialize GLUT
-	glutCreateWindow(\"Firefly - An Educational 3D Graphics Language\"); // Create a window with the given title
-	glutInitWindowSize(800, 600);   // Set the window's initial width & height
-	glutInitWindowPosition(80, 80); // Position the window's initial top-left corner
-	glutDisplayFunc(display); // Register display callback handler for window re-paint
-	init();
-	glutMainLoop();           // Enter the infinitely event-processing loop"
+	glutInit(&argc, argv);          // Initialize GLUT
+   	glutInitWindowSize(640, 480);   // Set the window's initial width & height - non-square
+   	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+   	glutCreateWindow(\"Model Transform\");  // Create window with the given title
+   	glutDisplayFunc(display);       // Register callback handler for window re-paint event
+   	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+   	init();                       // Our own OpenGL initialization
+   	glutMainLoop();                 // Enter the infinite event-processing loop"
 										
 		
 let closeCppFile = function
@@ -76,16 +92,16 @@ let type_to_string = function
 	  Integer(x) ->	"int"	
 	| Float(x) ->	"float"
 	
-
-	
+let rec eval_expr = function 
+	Integer(x) -> string_of_int x
 let rec output_expr = function
 	  Integer(x) ->	fprintf oc "%s" (string_of_int x)	
 	| Identifier(x) -> fprintf oc "%s" (x);
 	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); output_expr e; fprintf oc "%s" (";\n\t")
-	(*| Binop(e1, op, e2) ->
+	| Binop(e1, op, e2) ->
 			(match op with
 			  On -> let v1 = int_of_string(eval_expr e1) and v2 = tuple_of_vec e2 in fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^"\";")
-			)*)
+			)
 
 let rec eval = function
 	  Integer(x) ->	fprintf oc "\t%s\n\n" ("cout<<\"Integer is: " ^ (string_of_int x) ^"\";")		
