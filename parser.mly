@@ -1,6 +1,5 @@
 %{ open Ast %}
 
-%token PRINT
 %token <int> INTEGER
 %token <float> FLOAT
 %token PLUS
@@ -14,9 +13,12 @@
 
 %%
 
-program:
-	PRINT			{ Print }
-	| expr			{ Exp($1) }
+program:		
+	 exprs				{ List.rev $1 }
+	  
+exprs:	  
+	 /* nothing */ { [] }
+	| exprs expr				{ ($2 :: $1) }	
 	
 expr:
     INTEGER    			{ Integer($1) }

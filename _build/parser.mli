@@ -1,5 +1,4 @@
 type token =
-  | PRINT
   | INTEGER of (int)
   | FLOAT of (float)
   | PLUS

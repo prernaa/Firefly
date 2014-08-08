@@ -7,6 +7,8 @@ type expr =
   | Vec2 of int * int
   | Binop of expr * op * expr
 
-type program =
-	Print
-	| Exp of expr
+type exprs = 
+	expr list
+
+type program = 
+	exprs
