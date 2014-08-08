@@ -74,6 +74,7 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);          // Initialize GLUT
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);	// Enable double buffering
    	glutInitWindowSize(640, 480);   // Set the window's initial width & height - non-square
    	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
    	glutCreateWindow(\"Model Transform\");  // Create window with the given title
@@ -97,7 +98,8 @@ let firefly = ref (0.0,0.0);;
 let tuple_of_vec = function
 	Vec2(x,y)	->	(x,y)
 let norm_tuple_of_vec = function
-	Vec2(x,y)	->	(x/.(x+.y),y/.(x+.y))	
+	Vec2(x,y) ->	let mag = sqrt ((x *. x) +. (y *. y)) in
+						(x /. mag, y/. mag)  (* Vec2(x,y)	->	(x/.(x+.y),y/.(x+.y))	*)
 
 let type_to_string = function
 	  Integer(x) ->	"int"	
@@ -122,11 +124,11 @@ let rec output_expr = function
 						fprintf oc "\n\t%s" ("\tglVertex2f("^string_of_float (fst !firefly) ^"f, "^string_of_float (snd !firefly)^"f);\n\t\tglVertex2f("^string_of_float (fst newFirefly) ^"f, "^string_of_float (snd newFirefly)^"f);");
 						fprintf oc "\n\t%s" ("glEnd();");
 						firefly := newFirefly
-					
 						(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst newFirefly) ^","^string_of_float (snd newFirefly) ^ "\";")
 						*)
 			  			(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst onDir) ^","^string_of_float (snd onDir) ^" DIST:"^string_of_float onDist ^ "\";")
 						*)
+			
 			)
 					
 let translate = function

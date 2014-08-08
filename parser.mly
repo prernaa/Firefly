@@ -2,14 +2,14 @@
 
 %token <int> INTEGER
 %token <float> FLOAT
-%token ASSIGN PLUS ON
+%token ASSIGN PLUS MINUS ON
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
  
 %left ASSIGN
 %right ON
-%left PLUS
+%left PLUS MINUS
 
 %start program
 %type <Ast.program> program
