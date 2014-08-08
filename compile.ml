@@ -6,7 +6,7 @@ let oc = open_out file
 
 let initCppFile = function 
 	_ ->	
-			fprintf oc "%s\n\n" "\n\n
+			fprintf oc "%s\n\n\t" "\n\n
 #include <iostream>
 #include <GL/glut.h>  // GLUT, includes glu.h and gl.h
 #ifdef _MSC_VER                         // Check if MS Visual C compiler
@@ -52,7 +52,6 @@ void init() {
 }
 int main(int argc, char** argv)
 {
-	cout << \"Hello!\" << endl;
 	glutInit(&argc, argv);                 // Initialize GLUT
 	glutCreateWindow(\"Firefly - An Educational 3D Graphics Language\"); // Create a window with the given title
 	glutInitWindowSize(800, 600);   // Set the window's initial width & height
@@ -68,13 +67,21 @@ let closeCppFile = function
 	return 0;
 }";
 			close_out oc
-				
+let type_to_string = function
+	  Integer(x) ->	"int"	
+	| Float(x) ->	"float"
+	
+let rec eval_expr = function
+	  Integer(x) ->	fprintf oc "%s" (string_of_int x)		
+	| Identifier(x) -> fprintf oc "%s" (x)
+	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); eval_expr e; fprintf oc "%s" (";\n\t")
+
 let rec eval = function
 	  Integer(x) ->	fprintf oc "\t%s\n\n" ("cout<<\"Integer is: " ^ (string_of_int x) ^"\";")		
 	| Float(x) ->	fprintf oc "\t%s\n\n" ("cout<<\"Float is: " ^ (string_of_float x)^"\";")
 	| Vec2(x,y)	->	fprintf oc "\t%s\n\n" ("cout<<\"Vec2 is: [" ^ (string_of_float x) ^ "," ^ (string_of_float y) ^ "]" ^ "\";")
 	| Identifier(x) -> fprintf oc "\t%s\n\n" ("cout<<\"Identifier is: " ^ (x) ^"\";")
-	| Assign(v,e)	-> fprintf oc "\t%s\n\n" ("cout<<\"Assign is working!"^"\";")
+	| Assign(v,e)	-> fprintf oc "\t%s\n\n" ("cout<<\"Assigning: " ^ (v) ^"\";")		
 	| Binop(e1, op, e2) ->
 			let v1 = eval e1 and v2 = eval e2 in
 			(match op with
@@ -84,5 +91,4 @@ let rec eval = function
 	| _	->			fprintf oc "\t%s\n\n" "cout<<\"base case\""
 					
 let translate = function
-	 exprs -> initCppFile(); List.iter eval exprs;  closeCppFile()
-
+	 exprs -> initCppFile(); List.iter eval_expr exprs;  closeCppFile()
