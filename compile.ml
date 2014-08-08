@@ -67,14 +67,25 @@ let closeCppFile = function
 	return 0;
 }";
 			close_out oc
+let firefly = (0,0)
+
+let tuple_of_vec = function
+	Vec2(x,y)	->	(x,y)	
+
 let type_to_string = function
 	  Integer(x) ->	"int"	
 	| Float(x) ->	"float"
 	
-let rec eval_expr = function
-	  Integer(x) ->	fprintf oc "%s" (string_of_int x)		
-	| Identifier(x) -> fprintf oc "%s" (x)
-	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); eval_expr e; fprintf oc "%s" (";\n\t")
+
+	
+let rec output_expr = function
+	  Integer(x) ->	fprintf oc "%s" (string_of_int x)	
+	| Identifier(x) -> fprintf oc "%s" (x);
+	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); output_expr e; fprintf oc "%s" (";\n\t")
+	(*| Binop(e1, op, e2) ->
+			(match op with
+			  On -> let v1 = int_of_string(eval_expr e1) and v2 = tuple_of_vec e2 in fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^"\";")
+			)*)
 
 let rec eval = function
 	  Integer(x) ->	fprintf oc "\t%s\n\n" ("cout<<\"Integer is: " ^ (string_of_int x) ^"\";")		
@@ -83,7 +94,6 @@ let rec eval = function
 	| Identifier(x) -> fprintf oc "\t%s\n\n" ("cout<<\"Identifier is: " ^ (x) ^"\";")
 	| Assign(v,e)	-> fprintf oc "\t%s\n\n" ("cout<<\"Assigning: " ^ (v) ^"\";")		
 	| Binop(e1, op, e2) ->
-			let v1 = eval e1 and v2 = eval e2 in
 			(match op with
 			  On -> fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^"\";")
 			| Add -> fprintf oc "\t%s\n\n" ("cout<<\"Add is working!"^"\";")
@@ -91,4 +101,4 @@ let rec eval = function
 	| _	->			fprintf oc "\t%s\n\n" "cout<<\"base case\""
 					
 let translate = function
-	 exprs -> initCppFile(); List.iter eval_expr exprs;  closeCppFile()
+	 exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile()
