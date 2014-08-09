@@ -130,7 +130,7 @@ let rec gen_expr = function
   | Vec2(x, y) -> gen_expr (Constant(Float(x))) @ gen_expr (Constant(Float(y))) @ ["VEC"]
   | Binop (e1, op, e2) -> gen_expr e1 @ gen_expr e2 @ ["OP"]
   | Identifier(x) -> [x]
-  | Assign(v,e) -> gen_expr e @ gen_expr (Identifier(v)) @ ["Asn"]
+| Assign(v,e) -> gen_expr e @ gen_expr (Identifier(v)) @ ["Asn"]
   | _ -> []  	
 
 let rec gen_stmt = function

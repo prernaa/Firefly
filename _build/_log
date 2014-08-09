@@ -1,0 +1,32 @@
+### Starting build.
+# Target: firefly3D.ml.depends, tags: { extension:ml, file:firefly3D.ml, ocaml, ocamldep, quiet }
+''ocamldep.opt -modules firefly3D.ml > firefly3D.ml.depends
+# Target: compile.ml.depends, tags: { extension:ml, file:compile.ml, ocaml, ocamldep, quiet }
+''ocamldep.opt -modules compile.ml > compile.ml.depends
+# Target: ast.ml.depends, tags: { extension:ml, file:ast.ml, ocaml, ocamldep, quiet }
+''ocamldep.opt -modules ast.ml > ast.ml.depends
+# Target: ast.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:ast.cmo, file:ast.ml, implem, ocaml, quiet }
+''ocamlc.opt -c -o ast.cmo ast.ml
+# Target: parser.mly, tags: { extension:mly, file:parser.mly, ocaml, ocamlyacc, parser, quiet }
+''ocamlyacc parser.mly
+# Target: parser.mli.depends, tags: { extension:mli, file:parser.mli, ocaml, ocamldep, quiet }
+''ocamldep.opt -modules parser.mli > parser.mli.depends
+# Target: scanner.mll, tags: { extension:mll, file:scanner.mll, lexer, ocaml, ocamllex, quiet }
+''ocamllex.opt -q scanner.mll
+# Target: scanner.ml.depends, tags: { extension:ml, file:scanner.ml, ocaml, ocamldep, quiet }
+''ocamldep.opt -modules scanner.ml > scanner.ml.depends
+# Target: parser.cmi, tags: { byte, compile, extension:mli, file:parser.mli, interf, ocaml, quiet }
+''ocamlc.opt -c -o parser.cmi parser.mli
+# Target: compile.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:compile.cmo, file:compile.ml, implem, ocaml, quiet }
+''ocamlc.opt -c -o compile.cmo compile.ml
+# Target: scanner.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:scanner.cmo, file:scanner.ml, implem, ocaml, quiet }
+''ocamlc.opt -c -o scanner.cmo scanner.ml
+# Target: firefly3D.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:firefly3D.cmo, file:firefly3D.ml, implem, ocaml, quiet }
+''ocamlc.opt -c -o firefly3D.cmo firefly3D.ml
+# Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
+''ocamldep.opt -modules parser.ml > parser.ml.depends
+# Target: parser.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:parser.cmo, file:parser.ml, implem, ocaml, quiet }
+''ocamlc.opt -c -o parser.cmo parser.ml
+# Target: firefly3D.byte, tags: { byte, dont_link_with, extension:byte, file:firefly3D.byte, link, ocaml, program, quiet }
+''ocamlc.opt ast.cmo compile.cmo parser.cmo scanner.cmo firefly3D.cmo -o firefly3D.byte
+# Compilation successful.
