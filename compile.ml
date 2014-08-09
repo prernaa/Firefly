@@ -1,5 +1,9 @@
 open Ast
 open Printf
+open Semantics
+
+
+	
 
 let globals_index = ref (0)
 let globals = Array.make 10 ("","")
@@ -128,23 +132,28 @@ let rec eval_expr = function
 let rec gen_expr = function
 	Constant(x) -> 
 		( match x with 
-			Integer(x) -> [string_of_int x]
-		  | Float(x)	-> 	[string_of_float x] )
-  | Vec2(x, y) -> gen_expr (Constant(Float(x))) @ gen_expr (Constant(Float(y))) @ ["VEC"]
-  | Binop (e1, op, e2) -> gen_expr e1 @ gen_expr e2 @ ["OP"]
-  | Identifier(x) -> 
-		globals.(!globals_index) <- (x, "Type"); 
-		globals_index := !globals_index + 1;
-		[x]
-  | Assign(v,e) -> gen_expr e @ gen_expr (Identifier(v)) @ ["Asn"]
-  | _ -> []  	
+			Integer(x) -> [(Int(x),string_of_int x,"int")]
+		  | Float(x)	-> 	[(Flt(x),string_of_float x,"float")] )
+  | Vec2(x, y) -> gen_expr (Constant(Float(x))) @ gen_expr (Constant(Float(y))) @ [(Vec2_Op,"VEC","vec2cpp")]
+  | Binop (e1, op, e2) -> let v1 = gen_expr e1 and v2 = gen_expr e2 in
+		( match op with
+			On -> v1 @ v2 @ [(On_Op,"ON","vec2cpp")]
+		  | Off -> v1 @ v2 @ [(Off_Op,"OFF","vec2cpp")]
+		  | Add -> v1 @ v2 @ [(Add_Op,"ADD","TypeToInfer")]
+		)
+  | Identifier(x) -> [(Id(x),"ID(" ^ x ^ ")","TypeToInfer")]
+  | Assign(v,e) -> 	gen_expr e @ gen_expr (Identifier(v)) @ [(Asn_Op,"Asn","TypeToInfer")]
+					(* globals.(!globals_index) <- (v, "Type"); 
+					globals_index := !globals_index + 1; *)
+  (*| _ -> []  	*)
 
 let rec gen_stmt = function
 	Expr e -> gen_expr e
   
 let print_gen x = match x with
-	_ -> List.iter print_endline (gen_stmt x); print_endline ""; 
-	Array.iter (fun (v, t) -> print_endline (v ^ " fff " ^ t)) globals
+	_ -> 	List.iter (fun (fs, sn, thr) -> print_endline ("(" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals)); 
+			print_endline ""
+			(* ;Array.iter (fun (v, t) -> print_endline (v ^ " fff " ^ t)) globals *)
 	
 let rec output_expr exp = match exp with
 	  Constant(x) -> let v = eval_expr exp in
@@ -172,6 +181,8 @@ let rec output_expr exp = match exp with
 			
 			)
 					
+
+
 let translate = function
 	 (*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
 	 stmts -> List.iter print_gen stmts;  closeCppFile()

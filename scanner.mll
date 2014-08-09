@@ -1,6 +1,6 @@
 { open Parser }
 
-let flt = ['-' '+']?['0'-'9']+ ['.'] ['0'-'9']+
+let flt = ['0'-'9']+ ['.'] ['0'-'9']+
 
 rule token = parse
   [' ' '\t' '\r' '\n'] 		{ token lexbuf } (* Whitespace *)
