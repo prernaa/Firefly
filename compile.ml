@@ -145,13 +145,13 @@ let rec gen_expr = function
   | Assign(v,e) -> 	gen_expr e @ gen_expr (Identifier(v)) @ [(Asn_Op,"Asn","TypeToInfer")]
 					(* globals.(!globals_index) <- (v, "Type"); 
 					globals_index := !globals_index + 1; *)
-  (*| _ -> []  	*)
+  | _ -> []  	
 
 let rec gen_stmt = function
 	Expr e -> gen_expr e
   
 let print_gen x = match x with
-	_ -> 	List.iter (fun (fs, sn, thr) -> print_endline ("(" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals)); 
+	_ -> 	List.iter (fun (fs, sn, thr) -> print_endline ("(" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); 
 			print_endline ""
 			(* ;Array.iter (fun (v, t) -> print_endline (v ^ " fff " ^ t)) globals *)
 	
