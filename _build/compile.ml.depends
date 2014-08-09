@@ -1,1 +1,1 @@
-compile.ml: Ast List Printf
+compile.ml: Array Ast List Printf

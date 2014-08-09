@@ -1,6 +1,9 @@
 open Ast
 open Printf
 
+let globals_index = ref (0)
+let globals = Array.make 10 ("","")
+
 let file = "output.cpp"
 let oc = open_out file
 
@@ -129,15 +132,19 @@ let rec gen_expr = function
 		  | Float(x)	-> 	[string_of_float x] )
   | Vec2(x, y) -> gen_expr (Constant(Float(x))) @ gen_expr (Constant(Float(y))) @ ["VEC"]
   | Binop (e1, op, e2) -> gen_expr e1 @ gen_expr e2 @ ["OP"]
-  | Identifier(x) -> [x]
-| Assign(v,e) -> gen_expr e @ gen_expr (Identifier(v)) @ ["Asn"]
+  | Identifier(x) -> 
+		globals.(!globals_index) <- (x, "Type"); 
+		globals_index := !globals_index + 1;
+		[x]
+  | Assign(v,e) -> gen_expr e @ gen_expr (Identifier(v)) @ ["Asn"]
   | _ -> []  	
 
 let rec gen_stmt = function
 	Expr e -> gen_expr e
   
 let print_gen x = match x with
-	_ -> List.iter print_endline (gen_stmt x); print_endline ""
+	_ -> List.iter print_endline (gen_stmt x); print_endline ""; 
+	Array.iter (fun (v, t) -> print_endline (v ^ " fff " ^ t)) globals
 	
 let rec output_expr exp = match exp with
 	  Constant(x) -> let v = eval_expr exp in
