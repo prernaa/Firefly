@@ -1,5 +1,4 @@
 open Stack
-open Flatc
 
 type element = 
 		Asn_Op
@@ -39,14 +38,12 @@ let evalTuple (x,y,z) g i = (match x with
 	|	Id(v)	-> 		if List.exists (fun s -> (fst s) = v) (Array.to_list g)
 						then
 						(
-							let f = List.find (fun s -> (fst s) = v) (Array.to_list g) in
-							print_endline ("Existing value: " ^ (fst f));
+							let f = List.find (fun s -> (fst s) = v) (Array.to_list g) in							
 							Stack.push (x,y,(snd f)) stck
 						)
 						else
 						(
-							g.(!i) <- (v, "TypeToInfer");
-							print_endline ("Inserting new value: " ^ v);
+							g.(!i) <- (v, "TypeToInfer");							
 							i := !i + 1;
 							Stack.push (x,y,z) stck
 						)				
@@ -65,6 +62,6 @@ let sa lst g i = 	g.(!i) <- ("alex","name");
 					i := !i + 1;
 					Stack.clear stck;
 					List.iter (fun (x) -> evalTuple x g i) lst;
-					lst 
+					[] 
   
 	
