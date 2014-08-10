@@ -2,6 +2,7 @@ open Stack
 
 type element = 
 		Asn_Op
+	|	DAsn_Op
 	|	Int of int
 	|   Flt of float
 	|	Id of string
@@ -16,19 +17,23 @@ type element =
 	|	GreaterThanEq_Op
 	|	EqualsTo_Op
 
-let stck = Stack.create ()
-let a = Stack.push (Int(1),"one","int") stck
-let a = Stack.pop stck
+let tempStack = Stack.create ()
+let a = Stack.push (Int(1),"one","int") tempStack
+let a = Stack.pop tempStack
+
+let semStack = Stack.create ()
+let a = Stack.push (Int(1),"one","int") semStack
+let a = Stack.pop semStack
 
 let frst (x,y,z) = x
 let scnd (x,y,z) = y
 let thrd (x,y,z) = z	
 
 let evalTuple (x,y,z) g i = (match x with
-		Int(v) ->  Stack.push (x,y,z) (stck)
-	| 	Flt(v) -> Stack.push (x,y,z) (stck)
+		Int(v) ->  Stack.push (x,y,z) (tempStack)
+	| 	Flt(v) -> Stack.push (x,y,z) (tempStack)
 	|	Add_Op	| Minus_Op -> 
-					let t1 = Stack.pop stck and t2 = Stack.pop stck in
+					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
@@ -38,13 +43,15 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push (x,y,v1) stck
+								Stack.push t2 semStack;
+								Stack.push t1 semStack;
+								Stack.push (x,y,v1) tempStack
 							)
 						)
 					)
 	|	LessThan_Op	| LessThanEq_Op | GreaterThan_Op | GreaterThanEq_Op | 
 		 EqualsTo_Op	->
-					let t1 = Stack.pop stck and t2 = Stack.pop stck in
+					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
@@ -54,37 +61,112 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push (x,y,v1) stck
+								Stack.push (x,y,v1) tempStack
 							)
 						)
 					)
 	|	Id(v)	-> 		if List.exists (fun s -> (fst s) = v) (Array.to_list g)
-						then
+						then 
 						(
 							let f = List.find (fun s -> (fst s) = v) (Array.to_list g) in							
-							Stack.push (x,y,(snd f)) stck
+							Stack.push (x,y,(snd f)) tempStack
 						)
 						else
 						(
+							(*
 							g.(!i) <- (v, "TypeToInfer");							
 							i := !i + 1;
-							Stack.push (x,y,z) stck
+							*)
+							Stack.push (x,y,z) tempStack
 						)				
-	|	Asn_Op	->	let v = Stack.pop stck and e = Stack.pop stck in
+	|	Asn_Op	->	let v = Stack.pop tempStack and e = Stack.pop tempStack in
 					(
-						if let isId = function Id(_) -> true | _ -> false in isId (frst v) then 
-						(							
-							Stack.push (x, y, thrd e) stck
+						(* Check v is an actual ID *)
+						if let isId = function Id(_) 
+							-> true | 
+							_ -> false 
+						in not (isId (frst v)) then 
+						(	
+							raise ( Failure ("Invalid assignment: " ^ (scnd v) ^ " is not a variable") ) 						
+						)
+						else
+						(
+							Stack.push e semStack;
+							if ((thrd v) = "TypeToInfer") then (* Declaration *)
+							(
+								g.(!i) <- ((scnd v), (thrd e));							
+								i := !i + 1;
+								print_endline ("Performing declaration for: " ^ (scnd v));
+								Stack.push (DAsn_Op, "DAsn", (thrd e)) tempStack;
+								Stack.push (frst v, scnd v, thrd e) semStack
+							)
+							else (* Assignment *)
+							(
+								if ((thrd v) <> (thrd e)) then
+								(
+									raise ( Failure ("Type mismatch: " ^ (scnd v) ^ " - assigning " ^ (thrd e) ^ " to " ^ (thrd v)))
+								)
+								else
+								(
+									Stack.push (x,y,(thrd v)) tempStack;
+									Stack.push v semStack
+								)
+							);
+							
+							
+							
 						)															
-						else raise ( Failure ("Invalid assignment: " ^ (scnd v) ^ " is not a variable") ) 						
+						
+					)
+	|	Vec2_Op	->	let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
+					(
+						let v1 = (thrd t1) and v2 = (thrd t2) in
+						(
+							if (v1 != v2) then
+							( 
+								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
+							)
+							else
+							(
+								Stack.push t2 semStack;
+								Stack.push t1 semStack;
+								Stack.push (x,y,"vec2cpp") tempStack
+							)
+						)
+					)
+	|	On_Op	->	let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
+					(
+						let v1 = (thrd t1) and v2 = (thrd t2) in
+						(
+							if (v2 <> "float") then
+							(
+								print_endline ("v2 = " ^ (scnd t2));
+								raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of ON must be float"))
+							);
+							
+							if (v1 <> "vec2cpp") then
+							(
+								raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of ON must be vec2"))
+							);
+							
+							Stack.push t2 semStack;
+							Stack.push t1 semStack;
+							Stack.push (x,y,v1) tempStack
+						)
 					)
 	|	_ -> ()
 	)
 
-let sa lst g i = 	g.(!i) <- ("alex","name"); 
-					i := !i + 1;
-					Stack.clear stck;
+let sa lst g i = 	i := !i + 1;
+					Stack.clear tempStack;
+					Stack.clear semStack;
 					List.iter (fun (x) -> evalTuple x g i) lst;
-					[] 
-  
-	
+					let rec buildSemList (l) = 
+						if Stack.is_empty semStack then
+							l
+						else
+						(
+							buildSemList ((Stack.pop semStack) ::  l)
+						)
+					in
+					buildSemList []
