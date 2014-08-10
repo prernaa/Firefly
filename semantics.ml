@@ -65,14 +65,15 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 						)
 					)
-	|	Id(v)	-> 		if List.exists (fun s -> (fst s) = v) (Array.to_list g)
+	|	Id(v)	-> 		if List.exists (fun s -> (fst s) = "ID(" ^ v ^ ")") (Array.to_list g)
 						then 
 						(
-							let f = List.find (fun s -> (fst s) = v) (Array.to_list g) in							
+							let f = List.find (fun s -> (fst s) = "ID(" ^ v ^ ")") (Array.to_list g) in							
 							Stack.push (x,y,(snd f)) tempStack
 						)
 						else
 						(
+							(* List.iter (fun s -> print_endline ("Iter: " ^ (fst s))) (Array.to_list g); *)
 							(*
 							g.(!i) <- (v, "TypeToInfer");							
 							i := !i + 1;
@@ -140,7 +141,7 @@ let evalTuple (x,y,z) g i = (match x with
 						(
 							if (v2 <> "float") then
 							(
-								print_endline ("v2 = " ^ (scnd t2));
+								print_endline ("v2 = " ^ (scnd t2) ^ " " ^ (thrd t2));
 								raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of ON must be float"))
 							);
 							
@@ -149,18 +150,18 @@ let evalTuple (x,y,z) g i = (match x with
 								raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of ON must be vec2"))
 							);
 							
-							Stack.push t2 semStack;
 							Stack.push t1 semStack;
+							Stack.push t2 semStack;
 							Stack.push (x,y,v1) tempStack
 						)
 					)
 	|	_ -> ()
 	)
 
-let sa lst g i = 	i := !i + 1;
-					Stack.clear tempStack;
+let sa lst g i = 	Stack.clear tempStack;
 					Stack.clear semStack;
 					List.iter (fun (x) -> evalTuple x g i) lst;
+					Stack.push (Stack.pop tempStack) semStack;
 					let rec buildSemList (l) = 
 						if Stack.is_empty semStack then
 							l

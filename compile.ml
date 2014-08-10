@@ -194,7 +194,7 @@ let print_gen x = match x with
 				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); 			
 			let _ = generate_c (gen_stmt x) (globals) tvar_index lbl_index in ();
 			print_endline ""
-			(* ;Array.iter (fun (v, t) -> print_endline (v ^ " fff " ^ t)) globals *)
+			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *)
 
 let translate = function
 	 (*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
