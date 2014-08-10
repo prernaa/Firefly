@@ -1,4 +1,5 @@
 open Stack
+open Flatc
 
 type element = 
 		Asn_Op
@@ -14,6 +15,8 @@ let stck = Stack.create ()
 let a = Stack.push (Int(1),"one","int") stck
 let a = Stack.pop stck
 
+let frst (x,y,z) = x
+let scnd (x,y,z) = y
 let thrd (x,y,z) = z	
 
 let evalTuple (x,y,z) g i = (match x with
@@ -47,6 +50,14 @@ let evalTuple (x,y,z) g i = (match x with
 							i := !i + 1;
 							Stack.push (x,y,z) stck
 						)				
+	|	Asn_Op	->	let v = Stack.pop stck and e = Stack.pop stck in
+					(
+						if let isId = function Id(_) -> true | _ -> false in isId (frst v) then 
+						(							
+							Stack.push (x, y, thrd e) stck
+						)															
+						else raise ( Failure ("Invalid assignment: " ^ (scnd v) ^ " is not a variable") ) 						
+					)
 	|	_ -> ()
 	)
 
