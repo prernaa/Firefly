@@ -2,8 +2,8 @@ open Semantics
 open Stack
 open Printf
 
-let file = "output.cpp"
-let oc = open_out file
+(*let file = "output.cpp"
+let oc = open_out file*)
 
 
 let stck = Stack.create ()
@@ -15,7 +15,7 @@ let temp_counter = ref(0)
 
 (* We assume that a variable called _firefly is declared the initcpp code *)
 
-let c_statement (x, y, z) ti li = match x with		
+let c_statement (x, y, z) ti li oc= match x with		
 		Int(v) 	->  (*seek_out oc flen;*)
 					(*let flen = out_channel_length oc in 
 					seek_out oc flen;
@@ -82,9 +82,9 @@ glEnd();
 
 
 
-let generate_c lst ti li = 
+let generate_c lst ti li oc = 
 	Stack.clear stck;
-	List.iter (fun (x) -> c_statement x ti li) lst; 
+	List.iter (fun (x) -> c_statement x ti li oc) lst; 
 	(*List.iter (fun (fs, sn, thr) -> 				
 					print_endline ("PPP (" ^ sn ^ "," ^ thr ^ ")")) lst; 	*)
 	()

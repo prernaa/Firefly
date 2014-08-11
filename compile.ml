@@ -12,8 +12,7 @@ let file = "output.cpp"
 let oc = open_out file
 
 let initCppFile = function 
-	_ ->	
-			fprintf oc "%s\n\n\t" "\n\n
+	_ ->	fprintf oc "%s\n\n\t" "\n\n
 #include <iostream>
 #include <GL/glut.h>  // GLUT, includes glu.h and gl.h
 #include <math.h>
@@ -193,7 +192,7 @@ let rec gen_stmt = function
 let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				
 				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); *)
-			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index);
+			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
 			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *)
