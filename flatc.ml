@@ -69,7 +69,7 @@ let c_statement (x, y, z) ti li oc= match x with
 					temp_counter:=!temp_counter+1;
 					()
 	|	On_Op	-> 	(*STILL INCOMPLETE*)
-					let dist = Stack.pop stck and dir = Stack.pop stck in 
+					let dir = Stack.pop stck and dist = Stack.pop stck in 
 					fprintf oc "\n\t%s" ("float _t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));
 "^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
 "^dir^".y = "^dir^".y/_t"^string_of_int(!temp_counter)^";
@@ -84,6 +84,7 @@ glEnd();
 ");
 					temp_counter:=!temp_counter+1;
 					temp_counter:=!temp_counter+1;
+					Stack.push ("_t"^string_of_int(!temp_counter-1)) stck;
 					()
 	|   Off_Op	->  ()
 	|   DAsn_Op ->  let op1 = Stack.pop stck and op2 = Stack.pop stck in
@@ -105,7 +106,8 @@ glEnd();
 
 let generate_c lst ti li oc = 
 	Stack.clear stck;
+	List.iter (fun (fs, sn, thr) -> 				
+					print_endline ("TTT (" ^ sn ^ "," ^ thr ^ ")")) lst; 
 	List.iter (fun (x) -> c_statement x ti li oc) lst; 
-	(*List.iter (fun (fs, sn, thr) -> 				
-					print_endline ("PPP (" ^ sn ^ "," ^ thr ^ ")")) lst; 	*)
+	
 	()

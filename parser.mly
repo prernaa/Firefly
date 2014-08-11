@@ -42,6 +42,7 @@ expr:
   | vec2								{ $1 }
   | IDENTIFIER							{ Identifier($1) }
   | IDENTIFIER ASSIGN expr				{ Assign ($1, $3)}
+  | expr ASSIGN expr					{ raise (Failure ("Cannot have an expression on LHS of assignment!" ) ) }
   | expr PLUS expr 						{ Binop($1, Add,   $3) }
   | expr MINUS expr						{ Binop($1, Minus, $3) }
   | expr LESS expr						{ Binop($1, LessThan, $3) }

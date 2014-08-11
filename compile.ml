@@ -4,7 +4,7 @@ open Semantics
 open Flatc
 
 let globals_index = ref (0)
-let globals = Array.make 10 ("","")
+let globals = Array.make 1024 ("","")
 let tvar_index = ref (0)
 let lbl_index = ref (0)
 
@@ -192,9 +192,9 @@ let rec gen_stmt = function
 						@ [(Lbl(0), "LBL", "void")] @ gen_stmt ts @ [(Lbl(0), "LBL", "void")]
   
 let print_gen x = match x with
-	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				
-				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
-				(*print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); *)
+	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)
+				(*print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
+			(*print_endline ("TTT (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
 			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
