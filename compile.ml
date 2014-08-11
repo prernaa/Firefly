@@ -26,6 +26,8 @@ struct vec2cpp{
 	float x;
 	float y;
 };
+vec2cpp _ff = {0,0};
+int myprogram();
 void DrawAxes()
 {
 	glBegin(GL_LINES);
@@ -37,7 +39,6 @@ void DrawAxes()
 		glVertex2f(0.0f, +1.0f);
 	glEnd();
 }
-int myprogram();
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
    	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
@@ -199,4 +200,4 @@ let print_gen x = match x with
 
 let translate = function
 	 (*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
-	 stmts -> List.iter print_gen stmts;  closeCppFile()
+	 stmts -> initCppFile(); List.iter print_gen stmts;  closeCppFile()
