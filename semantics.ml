@@ -17,6 +17,8 @@ type element =
 	|	GreaterThanEq_Op
 	|	EqualsTo_Op
 	|	If_Op
+	| 	Goto of int
+	|	Lbl of int
 
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -168,8 +170,10 @@ let evalTuple (x,y,z) g i = (match x with
 							else
 							(
 								Stack.push t1 semStack;																
-								Stack.push (x,y,z) tempStack
+								Stack.push (x,y,z) semStack;
 							)
+	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
+	|	Lbl(i)	->	Stack.push (x, y, z) semStack;																
 	|	_ -> ()
 	)
 
