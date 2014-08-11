@@ -9,22 +9,22 @@ let temp_counter = ref(0)
 (*let firefly = ref (0.0,0.0) (* The compiler keeps a track of the firefly's position *) *)
 
 let c_statement (x, y, z) ti li = match x with		
-		Int(v) 	->  print_endline("int t"^ string_of_int(!temp_counter)^ " = "^string_of_int(v)^";");
-					Stack.push ("t"^string_of_int(!temp_counter)) stck;
+		Int(v) 	->  print_endline("int _t"^ string_of_int(!temp_counter)^ " = "^string_of_int(v)^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()	
-	| 	Flt(v) 	-> 	print_endline("float t"^ string_of_int(!temp_counter)^ " = "^string_of_float(v)^";");
-					Stack.push ("t"^string_of_int(!temp_counter)) stck;
+	| 	Flt(v) 	-> 	print_endline("float _t"^ string_of_int(!temp_counter)^ " = "^string_of_float(v)^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
 	|	Add_Op	-> 	let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					print_endline(z^" t"^ string_of_int(!temp_counter)^ " = "^op2^" + "^op1^";");
-					Stack.push ("t"^string_of_int(!temp_counter)) stck;
+					print_endline(z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" + "^op1^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
 	|	Minus_Op -> let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					print_endline(z^" t"^ string_of_int(!temp_counter)^ " = "^op2^" - "^op1^";");
-					Stack.push ("t"^string_of_int(!temp_counter)) stck;
+					print_endline(z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" - "^op1^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()	
 	|	LessThan_Op	-> () 	
@@ -32,8 +32,8 @@ let c_statement (x, y, z) ti li = match x with
 	|	GreaterThanEq_Op	-> ()	
 	|	EqualsTo_Op	-> 	()
 	|	Vec2_Op	-> 	let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					print_endline(z^" t"^ string_of_int(!temp_counter)^ " = {"^op2^" , "^op1^"};");
-					Stack.push ("t"^string_of_int(!temp_counter)) stck;
+					print_endline(z^" _t"^ string_of_int(!temp_counter)^ " = {"^op2^" , "^op1^"};");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
 	|	On_Op	-> 	(*STILL INCOMPLETE*)
