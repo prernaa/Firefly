@@ -33,8 +33,8 @@ let scnd (x,y,z) = y
 let thrd (x,y,z) = z	
 
 let evalTuple (x,y,z) g i = (match x with
-		Int(v) ->  Stack.push (x,y,z) (tempStack)
-	| 	Flt(v) -> Stack.push (x,y,z) (tempStack)
+		Int(v) ->  Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
+	| 	Flt(v) -> Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
 	|	Add_Op	| Minus_Op -> 
 					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
 					(
@@ -46,9 +46,10 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push t2 semStack;
-								Stack.push t1 semStack;
+								(*Stack.push t2 semStack;*) (* temporary removed!!! *)
+								(*Stack.push t1 semStack;*) (* temporary removed!!! *)
 								Stack.push (x,y,v1) tempStack
+								;Stack.push (x,y,v1) semStack (* temporary add! *)
 							)
 						)
 					)
@@ -64,9 +65,10 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push t2 semStack;
-								Stack.push t1 semStack;
+								(*Stack.push t2 semStack;*) (* temporary removed!!! *)
+								(*Stack.push t1 semStack;*) (* temporary removed!!! *)
 								Stack.push (x,y,z) tempStack
+								;Stack.push (x,y,z) semStack (* temporary add!! *)
 							)
 						)
 					)
@@ -75,6 +77,8 @@ let evalTuple (x,y,z) g i = (match x with
 						(
 							let f = List.find (fun s -> (fst s) = "ID(" ^ v ^ ")") (Array.to_list g) in							
 							Stack.push (x,y,(snd f)) tempStack
+							;Stack.push (x,y,(snd f)) semStack (* temporary add!! *)
+							(* ^ We can add ID to semantic stack because we already know its type in this case. *)
 						)
 						else
 						(
@@ -84,6 +88,7 @@ let evalTuple (x,y,z) g i = (match x with
 							i := !i + 1;
 							*)
 							Stack.push (x,y,z) tempStack
+							(* We do NOT add ID to semantic stack because we don't know its type in this case. *)
 						)				
 	|	Asn_Op	->	let v = Stack.pop tempStack and e = Stack.pop tempStack in
 					(
@@ -97,14 +102,28 @@ let evalTuple (x,y,z) g i = (match x with
 						)
 						else
 						(
-							Stack.push e semStack;
+							(* If performing a DAsn or Asn, first check if RHS is an undeclared variable. *)
+							if ((String.length (scnd e)) > 3) then (* Check we have a possible variable *)
+							(
+								let idprefix = String.sub (scnd e) (0) (3) and 
+								varname = String.sub (scnd e) (3) ((String.length (scnd e)) -4) in
+								if ((idprefix = "ID(") && ((thrd e) = "TypeToInfer")) then
+								(
+									raise ( Failure ("Variable " ^ (varname) ^ " is undeclared!") )
+								)
+							);
+							
+							(*Stack.push e semStack; *) (* temporary removal!!! *)
+							(* ^ removed this line because expressions now push themselves to sem stack *)
 							if ((thrd v) = "TypeToInfer") then (* Declaration *)
 							(
 								g.(!i) <- ((scnd v), (thrd e));							
 								i := !i + 1;
 								print_endline ("Performing declaration for: " ^ (scnd v));
-								Stack.push (DAsn_Op, "DAsn", (thrd e)) tempStack;
-								Stack.push (frst v, scnd v, thrd e) semStack
+								Stack.push (DAsn_Op, "DAsn", (thrd e)) tempStack
+								;Stack.push (frst v, scnd v, thrd e) semStack 
+								;Stack.push (DAsn_Op, "DAsn", (thrd e)) semStack (* temporary add!!! *)
+								(* ^ added this line because expressions now push themselves to sem stack *)
 							)
 							else (* Assignment *)
 							(
@@ -115,7 +134,10 @@ let evalTuple (x,y,z) g i = (match x with
 								else
 								(
 									Stack.push (x,y,(thrd v)) tempStack;
-									Stack.push v semStack
+									Stack.push (x,y,(thrd v)) semStack (* Temporary add!!! *)
+									(* ^ added this line because expressions now push themselves to sem stack *)
+									(*;Stack.push v semStack*) (* Temporary removal!!!*)
+									(* ^ removed this line because an existing ID pushes itself to sem stack *)
 								)
 							);
 							
@@ -134,9 +156,10 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push t2 semStack;
-								Stack.push t1 semStack;
+								(*Stack.push t2 semStack;*) (* temporary removed!!! *)
+								(*Stack.push t1 semStack;*) (* temporary removed!!! *)
 								Stack.push (x,y,"vec2cpp") tempStack
+								;Stack.push (x,y,"vec2cpp") semStack (* temporary add! *)
 							)
 						)
 					)
@@ -155,10 +178,11 @@ let evalTuple (x,y,z) g i = (match x with
 								raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of ON must be vec2"))
 							);
 							
-							Stack.push t1 semStack; (*t1 is vec2*)
-							Stack.push t2 semStack; (*t2 is distance*)
-							(*Sp, vec2 is pushed before distance*)
+							(*Stack.push t2 semStack;*) (*t1 is vec2*) (* temporary removed!!! *)
+							(*Stack.push t1 semStack;*) (*t2 is distance*) (* temporary removed!!! *)
+							(*So, vec2 is pushed before distance*)
 							Stack.push (x,y,v1) tempStack
+							;Stack.push (x,y,v1) semStack (* temporary add!!! *)
 						)
 					)
 	|	If_Op	-> 	let t1 = Stack.pop tempStack in
@@ -180,7 +204,8 @@ let evalTuple (x,y,z) g i = (match x with
 let sa lst g i = 	Stack.clear tempStack;
 					Stack.clear semStack;
 					List.iter (fun (x) -> evalTuple x g i) lst;					
-					Stack.push (Stack.pop tempStack) semStack;
+					(* Stack.push (Stack.pop tempStack) semStack; *) (* temporary removed !!! *)
+					(* ^ removed this because expressions push themselves onto sem stack now. *)
 					let rec buildSemList (l) = 
 						if Stack.is_empty semStack then
 							l
