@@ -150,8 +150,9 @@ let evalTuple (x,y,z) g i = (match x with
 								raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of ON must be vec2"))
 							);
 							
-							Stack.push t1 semStack;
-							Stack.push t2 semStack;
+							Stack.push t1 semStack; (*t1 is vec2*)
+							Stack.push t2 semStack; (*t2 is distance*)
+							(*Sp, vec2 is pushed before distance*)
 							Stack.push (x,y,v1) tempStack
 						)
 					)

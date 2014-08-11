@@ -100,9 +100,9 @@ let closeCppFile = function
 	return 0;
 }";
 			close_out oc
-let firefly = ref (0.0,0.0);;
+(*let firefly = ref (0.0,0.0);;
 
-(*
+
 let tuple_of_vec = function
 	Vec2(x,y)	->	(x,y)
 let norm_tuple_of_vec = function

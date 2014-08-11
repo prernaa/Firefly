@@ -6,6 +6,7 @@ let a = Stack.push ("hey") stck
 let a = Stack.pop stck
 
 let temp_counter = ref(0)
+(*let firefly = ref (0.0,0.0) (* The compiler keeps a track of the firefly's position *) *)
 
 let c_statement (x, y, z) ti li = match x with		
 		Int(v) 	->  print_endline("int t"^ string_of_int(!temp_counter)^ " = "^string_of_int(v)^";");
@@ -35,7 +36,10 @@ let c_statement (x, y, z) ti li = match x with
 					Stack.push ("t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
-	|	On_Op	-> 	()
+	|	On_Op	-> 	(*STILL INCOMPLETE*)
+					let dist = Stack.pop stck and dir = Stack.pop stck in 
+					print_endline("");
+					()
 	|   DAsn_Op ->  let op1 = Stack.pop stck and op2 = Stack.pop stck in
 					print_endline(z^" "^ op1 ^ " = "^op2^";");
 					Stack.push (op1) stck;
