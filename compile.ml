@@ -190,9 +190,10 @@ let rec gen_stmt = function
 	Expr e -> gen_expr e
   
 let print_gen x = match x with
-	_ -> 	List.iter (fun (fs, sn, thr) -> 				
-				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); 			
-			let _ = generate_c (gen_stmt x) (globals) tvar_index lbl_index in ();
+	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				
+				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); *)
+			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index);
+			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
 			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *)
 
