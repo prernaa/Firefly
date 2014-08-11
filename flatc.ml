@@ -38,8 +38,12 @@ let c_statement (x, y, z) ti li oc= match x with
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()	
-	|	LessThan_Op	-> () 	
-	|	LessThanEq_Op	-> ()|	GreaterThan_Op	-> 	()
+	|	LessThan_Op	-> let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					   fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" < "^op1^";");
+					   Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   temp_counter:=!temp_counter+1;
+					   () 	
+	|	LessThanEq_Op	-> ()
 	|   GreaterThan_Op -> let op1 = Stack.pop stck and op2 = Stack.pop stck in
 						  fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" > "^op1^";");
 						  Stack.push ("_t"^string_of_int(!temp_counter)) stck;
