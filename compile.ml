@@ -188,11 +188,13 @@ let rec gen_expr = function
 
 let rec gen_stmt = function
 	Expr e -> gen_expr e
+  | If(e, ts, fs) -> gen_expr e @ [(If_Op, "IF", "bool")] @ gen_stmt fs @ gen_stmt ts
   
 let print_gen x = match x with
-	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				
-				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); *)
-			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc);
+	_ -> 	List.iter (fun (fs, sn, thr) -> 				
+				(*print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
+				print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index); 
+			(*generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc);*)
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
 			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *)

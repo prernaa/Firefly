@@ -16,6 +16,7 @@ type element =
 	|	GreaterThan_Op
 	|	GreaterThanEq_Op
 	|	EqualsTo_Op
+	|	If_Op
 
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -61,7 +62,9 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push (x,y,v1) tempStack
+								Stack.push t2 semStack;
+								Stack.push t1 semStack;
+								Stack.push (x,y,z) tempStack
 							)
 						)
 					)
@@ -156,12 +159,23 @@ let evalTuple (x,y,z) g i = (match x with
 							Stack.push (x,y,v1) tempStack
 						)
 					)
+	|	If_Op	-> 	let t1 = Stack.pop tempStack in
+						let v1 = (thrd t1) in
+							if (v1 <> "bool") then
+							(								
+								raise ( Failure ("Invalid type: " ^ v1 ^ "; conditional expression for IF must be of type bool."))
+							)
+							else
+							(
+								Stack.push t1 semStack;																
+								Stack.push (x,y,z) tempStack
+							)
 	|	_ -> ()
 	)
 
 let sa lst g i = 	Stack.clear tempStack;
 					Stack.clear semStack;
-					List.iter (fun (x) -> evalTuple x g i) lst;
+					List.iter (fun (x) -> evalTuple x g i) lst;					
 					Stack.push (Stack.pop tempStack) semStack;
 					let rec buildSemList (l) = 
 						if Stack.is_empty semStack then
