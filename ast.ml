@@ -11,10 +11,11 @@ type expr =
   | Identifier of string (* can contain alphabets, numbers or underscores, but must begin with an alphabet*)
   | Vec2 of expr * expr
   | Binop of expr * op * expr
-  | Assign of string * expr
+  | Assign of string * expr  
   
 type stmt =
 	Expr of expr
+  | If of expr * stmt * stmt
   
 type stmts = 
 	stmt list

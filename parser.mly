@@ -5,7 +5,7 @@
 %token LESS LESSEQ GREATER GREATEREQ EQUALSTO
 %token LPAREN RPAREN
 %token OPENVEC COMMA CLOSEVEC
-%token ASSIGN PLUS MINUS ON OFF
+%token ASSIGN PLUS MINUS ON OFF IF ELSE
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
@@ -32,6 +32,7 @@ stmts:
 
 stmt:
 	expr								{ Expr($1) }	
+  | IF expr stmt ELSE stmt    			{ If($2, $3, $5) }
 
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }
