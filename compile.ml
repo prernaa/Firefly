@@ -2,11 +2,16 @@ open Ast
 open Printf
 open Semantics
 open Flatc
+open Stack
 
 let globals_index = ref (0)
 let globals = Array.make 1024 ("","")
 let tvar_index = ref (0)
+
+(* Label managment *)
 let lbl_index = ref (0)
+let lblStack = Stack.create ()
+let a = Stack.push !lbl_index lblStack
 
 let file = "output.cpp"
 let oc = open_out file
@@ -188,8 +193,15 @@ let rec gen_expr = function
 
 let rec gen_stmt = function
 	Expr e 			-> 	gen_expr e
-  | If(e, ts, fs) 	-> 	gen_expr e @ [(If_Op, "IF", "bool")] @ gen_stmt fs @ [(Goto(1), "GOTO 1", "void")] 
-						@ [(Lbl(0), "LBL 0", "void")] @ gen_stmt ts @ [(Lbl(1), "LBL 1", "void")]
+  | If(e, ts, fs) 	-> 	lbl_index := !lbl_index + 10;
+						Stack.push !lbl_index lblStack;
+						let li = Stack.top lblStack in
+						gen_expr e 
+						@ [(If_Op(li), "IF " ^ string_of_int(li), "bool")] 
+						@ gen_stmt fs 
+						@ [(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
+						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
+						@ gen_stmt ts @ [(Lbl(li + 1), "LBL " ^ string_of_int(li + 1), "void")]
   
 let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)

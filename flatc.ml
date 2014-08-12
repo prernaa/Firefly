@@ -10,11 +10,13 @@ let stck = Stack.create ()
 let a = Stack.push ("hey") stck
 let a = Stack.pop stck
 
+(*we should delete this if not needed --RA *)
 let lstck = Stack.create ()
 let a = Stack.push (-1) lstck
 (*let a = Stack.pop lstck*)
 
 let temp_counter = ref(0)
+(*we should delete this if not needed --RA *)
 let lbl_counter = ref(0)
 
 (*let rec globals_to_file g c i oc = 
@@ -113,21 +115,10 @@ glEnd();
 					let varname = String.sub (y) (3) lenSubs in 
 					Stack.push (varname) stck;
 					()
-	|	If_Op	->	let e = Stack.pop stck and ll = Stack.pop lstck in 
-						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(!lbl_counter) ^ ";}{");
-						Stack.push (!lbl_counter) lstck;
-						lbl_counter := !lbl_counter + 2
-	|	Goto(i)	->	let l = Stack.pop lstck in (
-						fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(l+1)^";");						
-						Stack.push (l) lstck;
-					)
-	|	Lbl(i)	->	let l = Stack.pop lstck in 
-					( 
-						if i=0 then fprintf oc "\n\t%s" ("} _L"^string_of_int(l+i) ^ ": {");
-						if i=1 then fprintf oc "\n\t%s" ("} _L"^string_of_int(l+i) ^ ": ");
-						print_endline ("JJJJJJJJ" ^ y);
-						Stack.push l lstck;
-					)
+	|	If_Op(i)->	let e = Stack.pop stck in 
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
+	|	Lbl(i)	->	fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
 	| 	_ 		->	()	
 
 
