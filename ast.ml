@@ -15,6 +15,7 @@ type expr =
   
 type stmt =
 	Expr of expr
+  |	Block of stmt list
   | If of expr * stmt * stmt
   
 type stmts = 

@@ -5,10 +5,12 @@ let flt = ['0'-'9']+ ['.'] ['0'-'9']+
 rule token = parse
   [' ' '\t' '\r' '\n'] 		{ token lexbuf } (* Whitespace *)
 | "/*"		{comment lexbuf}
-| '+'      { PLUS }
+| '+'      	{ PLUS }
 | '-'		{ MINUS }
 | '('		{ LPAREN }
 | ')'		{ RPAREN }
+| '{'      	{ LBRACE }
+| '}'      	{ RBRACE }
 | '['		{ OPENVEC }
 | ','		{ COMMA }
 | ']'		{ CLOSEVEC }

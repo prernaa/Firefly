@@ -158,7 +158,7 @@ let type_to_string = function
 	| NegConstant(x) ->
 		(match x with
 			  Integer(x) ->	"int"	
-			| Float(x) ->	"float")
+			| Float(x) ->	"float")	
 	| Vec2(x,y) ->	"vec2cpp"	
 	| _	-> "InvalidType"
 	
@@ -166,7 +166,11 @@ let rec gen_expr = function
 	Constant(x) -> 
 		( match x with 
 			Integer(x) -> [(Int(x),string_of_int x,"int")]
-		  | Float(x)	-> 	[(Flt(x),string_of_float x,"float")] )
+		  | Float(x)   -> [(Flt(x),string_of_float x,"float")] )
+  | NegConstant(x) -> 
+		( match x with 
+			Integer(x) -> [(Int(-x),string_of_int (-1 * x),"int")]
+		  | Float(x)   -> [(Flt(-1.0 *. x),string_of_float (-1.0 *. x),"float")] )
   | Vec2(x, y) -> gen_expr (x) @ gen_expr (y) @ [(Vec2_Op,"VEC","vec2cpp")]
   | Binop (e1, op, e2) -> let v1 = gen_expr e1 and v2 = gen_expr e2 in
 		( match op with

@@ -3,7 +3,7 @@
 %token <int> INTEGER
 %token <float> FLOAT
 %token LESS LESSEQ GREATER GREATEREQ EQUALSTO
-%token LPAREN RPAREN
+%token LPAREN RPAREN LBRACE RBRACE
 %token OPENVEC COMMA CLOSEVEC
 %token ASSIGN PLUS MINUS ON OFF IF ELSE
 %token EOF
@@ -12,7 +12,7 @@
  
 %left LPAREN RPAREN
 %right ASSIGN
-%left LESS LESSEQ GREATER GREATEREQ EQUALSTO
+%nonassoc LESS LESSEQ GREATER GREATEREQ EQUALSTO
 %right ON OFF
 %left OPENVEC COMMA CLOSEVEC
 %left PLUS MINUS
@@ -32,6 +32,7 @@ stmts:
 
 stmt:
 	expr								{ Expr($1) }	
+  |	LBRACE stmts RBRACE					{ Block(List.rev $2) }
   | IF expr stmt ELSE stmt    			{ If($2, $3, $5) }
 
 vec2:

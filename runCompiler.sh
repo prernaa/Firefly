@@ -29,6 +29,7 @@ DeleteCpp()
 	rm -f $filename.exe
 	rm -f $filename.o
 	rm -f $filename.out
+	rm -f $filename
 }
 
 while getopts cdhps o

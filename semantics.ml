@@ -45,7 +45,7 @@ let evalTuple (x,y,z) g i = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v1 != v2) then
+							if (v1 <> v2) then
 							( 
 								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
 							)
@@ -64,7 +64,7 @@ let evalTuple (x,y,z) g i = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v1 != v2) then
+							if (v1 <> v2) then
 							( 
 								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
 							)
@@ -153,7 +153,7 @@ let evalTuple (x,y,z) g i = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v1 != v2) then
+							if (v1 <> v2) then
 							( 
 								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
 							)
