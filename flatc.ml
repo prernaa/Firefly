@@ -99,7 +99,8 @@ glEnd();
 ");
 					temp_counter:=!temp_counter+1;
 					temp_counter:=!temp_counter+1;
-					Stack.push ("_t"^string_of_int(!temp_counter-1)) stck;
+					(*Stack.push ("_t"^string_of_int(!temp_counter-1)) stck;*)
+					Stack.push ("_ff") stck;
 					()
 	|   Off_Op	->  ()
 	|   DAsn_Op ->  let op1 = Stack.pop stck and op2 = Stack.pop stck in
@@ -117,6 +118,9 @@ glEnd();
 					()
 	|	If_Op(i)->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+    |	While_Op(i)	->
+					let e = Stack.pop stck in 
+						fprintf oc "\n\t%s" ("while (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
 	|	Lbl(i)	->	fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
 	| 	_ 		->	()	

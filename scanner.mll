@@ -26,6 +26,7 @@ rule token = parse
 | flt as lxm 	{ FLOAT(float_of_string lxm) }
 | "if"     	{ IF }
 | "else"   	{ ELSE }
+| "while"  	{ WHILE }
 | eof { EOF }
 | ['a'-'z' 'A'-'Z']+ ['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm {IDENTIFIER(lxm)}
 | _ as char 				{ raise (Failure("illegal character " ^ Char.escaped char)) }

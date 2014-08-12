@@ -5,7 +5,7 @@
 %token LESS LESSEQ GREATER GREATEREQ EQUALSTO
 %token LPAREN RPAREN LBRACE RBRACE
 %token OPENVEC COMMA CLOSEVEC
-%token ASSIGN PLUS MINUS ON OFF IF ELSE
+%token ASSIGN PLUS MINUS ON OFF IF ELSE WHILE
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
@@ -34,6 +34,7 @@ stmt:
 	expr								{ Expr($1) }	
   |	LBRACE stmts RBRACE					{ Block(List.rev $2) }
   | IF expr stmt ELSE stmt    			{ If($2, $3, $5) }
+  | WHILE expr stmt						{ While($2, $3) }
 
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }

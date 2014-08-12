@@ -19,6 +19,7 @@ type element =
 	|	If_Op of int
 	| 	Goto of int
 	|	Lbl of int
+	|	While_Op of int
 
 let type_to_string x = (match x with
 		Asn_Op -> "Asn_Op"
@@ -193,6 +194,17 @@ let evalTuple (x,y,z) g i = (match x with
 							if (v1 <> "bool") then
 							(								
 								raise ( Failure ("Invalid type: " ^ v1 ^ "; conditional expression for IF must be of type bool."))
+							)
+							else
+							(
+								(*Stack.push t1 semStack;*)																
+								Stack.push (x,y,z) semStack;
+							)
+	|	While_Op(i)-> 	let t1 = Stack.pop tempStack in
+						let v1 = (thrd t1) in
+							if (v1 <> "bool") then
+							(								
+								raise ( Failure ("Invalid type: " ^ v1 ^ "; conditional expression for WHILE must be of type bool."))
 							)
 							else
 							(

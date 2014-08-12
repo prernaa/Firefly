@@ -206,6 +206,15 @@ let rec gen_stmt = function
 						@ [(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
 						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
 						@ gen_stmt ts @ [(Lbl(li + 1), "LBL " ^ string_of_int(li + 1), "void")]
+  | While(e, ts)	->	lbl_index := !lbl_index + 10;
+						Stack.push !lbl_index lblStack;
+						let li = Stack.top lblStack in
+						[(Lbl(li + 1), "LBL " ^ string_of_int(li + 1), "void")]
+						@ gen_expr e 
+						@ [(While_Op(li), "WHILE " ^ string_of_int(li), "bool")] 
+						@ gen_stmt ts 
+						@ [(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
+						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
   | Block(stmts)	->	List.concat (List.map gen_stmt stmts)
   
 let print_gen x = match x with
