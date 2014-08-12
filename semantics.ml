@@ -16,7 +16,7 @@ type element =
 	|	GreaterThan_Op
 	|	GreaterThanEq_Op
 	|	EqualsTo_Op
-	|	If_Op
+	|	If_Op of int
 	| 	Goto of int
 	|	Lbl of int
 
@@ -188,7 +188,7 @@ let evalTuple (x,y,z) g i = (match x with
 							;Stack.push (x,y,v1) semStack (* temporary add!!! *)
 						)
 					)
-	|	If_Op	-> 	let t1 = Stack.pop tempStack in
+	|	If_Op(i)-> 	let t1 = Stack.pop tempStack in
 						let v1 = (thrd t1) in
 							if (v1 <> "bool") then
 							(								

@@ -82,6 +82,44 @@ int main(int argc, char** argv)
 int myprogram(){
 
 	
+	int _t0 = 0;
+	int var1 = _t0;
+	int _t1 = 1;
+	int _t2 = 2;
+	bool _t3 = _t1 > _t2;
+	if (_t3) { goto _L10; }
+	int _t4 = 1001;
+	int _t5 = 1002;
+	bool _t6 = _t4 > _t5;
+	if (_t6) { goto _L20; }
+	int _t7 = 10;
+	var1 = _t7;
+	goto _L21;
+	_L20:
+	int _t8 = 0;
+	var1 = _t8;
+	_L21:
+	goto _L11;
+	_L10:
+	int _t9 = 1;
+	var1 = _t9;
+	_L11:
+	float _t10 = 0.4;
+	int _t11 = 1;
+	vec2cpp _t12 = {_t11 , var1};
+	float _t13 = sqrt((_t12.x * _t12.x + _t12.y * _t12.y));	
+_t12.x = _t12.x/_t13;
+_t12.y = _t12.y/_t13;
+vec2cpp _t14 = {_t10 * _t12.x + _ff.x , _t10 * _t12.y + _ff.y };
+glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(_ff.x, _ff.y);
+	glVertex2f(_t14.x , _t14.y);
+_ff.x = _t14.x;
+_ff.y = _t14.y;
+glEnd();
+
+	vec2cpp varline = _t14;
 
 
 	return 0;
