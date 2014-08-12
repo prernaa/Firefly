@@ -196,7 +196,7 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								Stack.push t1 semStack;																
+								(*Stack.push t1 semStack;*)																
 								Stack.push (x,y,z) semStack;
 							)
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																

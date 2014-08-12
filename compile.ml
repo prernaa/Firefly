@@ -188,8 +188,8 @@ let rec gen_expr = function
 
 let rec gen_stmt = function
 	Expr e 			-> 	gen_expr e
-  | If(e, ts, fs) 	-> 	gen_expr e @ [(If_Op, "IF", "bool")] @ gen_stmt fs @ [(Goto(1), "GOTO", "void")] 
-						@ [(Lbl(0), "LBL", "void")] @ gen_stmt ts @ [(Lbl(0), "LBL", "void")]
+  | If(e, ts, fs) 	-> 	gen_expr e @ [(If_Op, "IF", "bool")] @ gen_stmt fs @ [(Goto(1), "GOTO 1", "void")] 
+						@ [(Lbl(0), "LBL 0", "void")] @ gen_stmt ts @ [(Lbl(1), "LBL 1", "void")]
   
 let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)
