@@ -195,10 +195,10 @@ let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)
 				(*print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
 			(*print_endline ("TTT (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
-			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc);
+			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
-			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *)
+			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *) 
 
 let translate = function
 	 (*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)

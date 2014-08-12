@@ -11,11 +11,18 @@ let a = Stack.push ("hey") stck
 let a = Stack.pop stck
 
 let lstck = Stack.create ()
-let a = Stack.push ("") lstck
-let a = Stack.pop lstck
+let a = Stack.push (-1) lstck
+(*let a = Stack.pop lstck*)
 
 let temp_counter = ref(0)
 let lbl_counter = ref(0)
+
+(*let rec globals_to_file g c i oc = 
+	if i < c then (
+		fprintf oc "\n\t%s" ((snd g.(i))^" "^(fst g.(i))^";\n");
+		globals_to_file g c (i+1) oc
+	)	
+ 	else ()*)
 
 (*let firefly = ref (0.0,0.0) (* The compiler keeps a track of the firefly's position *) *)
 
@@ -95,6 +102,7 @@ glEnd();
 	|   Off_Op	->  ()
 	|   DAsn_Op ->  let op1 = Stack.pop stck and op2 = Stack.pop stck in
 					fprintf oc "\n\t%s" (z^" "^ op1 ^ " = "^op2^";");
+					(*fprintf oc "\n\t%s" (op1 ^ " = "^op2^";");*)
 					Stack.push (op1) stck;
 					()
 	|	Asn_Op	->  let op1 = Stack.pop stck and op2 = Stack.pop stck in
@@ -105,27 +113,29 @@ glEnd();
 					let varname = String.sub (y) (3) lenSubs in 
 					Stack.push (varname) stck;
 					()
-	|	If_Op	->	let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(!lbl_counter) ^ ";}");
-						Stack.push ("_L" ^ string_of_int (!lbl_counter)) lstck;
-						lbl_counter := !lbl_counter + 1
-	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(!lbl_counter)^";");						
-						Stack.push ("_L" ^ string_of_int (!lbl_counter)) lstck;
-						lbl_counter := !lbl_counter + 1
-	|	Lbl(i)	->	let l1 = Stack.pop lstck and l0 = Stack.pop lstck in 
+	|	If_Op	->	let e = Stack.pop stck and ll = Stack.pop lstck in 
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(!lbl_counter) ^ ";}{");
+						Stack.push (!lbl_counter) lstck;
+						lbl_counter := !lbl_counter + 2
+	|	Goto(i)	->	let l = Stack.pop lstck in (
+						fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(l+1)^";");						
+						Stack.push (l) lstck;
+					)
+	|	Lbl(i)	->	let l = Stack.pop lstck in 
 					( 
-						fprintf oc "\n\t%s" (l0 ^ ":");	
+						if i=0 then fprintf oc "\n\t%s" ("} _L"^string_of_int(l+i) ^ ": {");
+						if i=1 then fprintf oc "\n\t%s" ("} _L"^string_of_int(l+i) ^ ": ");
 						print_endline ("JJJJJJJJ" ^ y);
-						Stack.push l1 lstck;
-						Stack.push "_lx" lstck
+						Stack.push l lstck;
 					)
 	| 	_ 		->	()	
 
 
 
 
-let generate_c lst ti li oc = 
+let generate_c lst ti li oc globals globals_count= 
 	Stack.clear stck;
+	(*globals_to_file globals globals_count 0 oc;*)
 	List.iter (fun (fs, sn, thr) -> 				
 					print_endline ("TTT (" ^ sn ^ "," ^ thr ^ ")")) lst; 
 	List.iter (fun (x) -> c_statement x ti li oc) lst; 
