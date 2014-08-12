@@ -106,17 +106,18 @@ glEnd();
 					Stack.push (varname) stck;
 					()
 	|	If_Op	->	let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(!lbl_counter) ^ "}");
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(!lbl_counter) ^ ";}");
 						Stack.push ("_L" ^ string_of_int (!lbl_counter)) lstck;
 						lbl_counter := !lbl_counter + 1
-	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(!lbl_counter));						
+	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(!lbl_counter)^";");						
 						Stack.push ("_L" ^ string_of_int (!lbl_counter)) lstck;
 						lbl_counter := !lbl_counter + 1
 	|	Lbl(i)	->	let l1 = Stack.pop lstck and l0 = Stack.pop lstck in 
 					( 
 						fprintf oc "\n\t%s" (l0 ^ ":");	
 						print_endline ("JJJJJJJJ" ^ y);
-						Stack.push l1 lstck
+						Stack.push l1 lstck;
+						Stack.push "_lx" lstck
 					)
 	| 	_ 		->	()	
 
