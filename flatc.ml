@@ -10,7 +10,13 @@ let stck = Stack.create ()
 let a = Stack.push ("hey") stck
 let a = Stack.pop stck
 
+let lstck = Stack.create ()
+let a = Stack.push ("") lstck
+let a = Stack.pop lstck
+
 let temp_counter = ref(0)
+let lbl_counter = ref(0)
+
 (*let firefly = ref (0.0,0.0) (* The compiler keeps a track of the firefly's position *) *)
 
 (* We assume that a variable called _firefly is declared the initcpp code *)
@@ -70,7 +76,7 @@ let c_statement (x, y, z) ti li oc= match x with
 					()
 	|	On_Op	-> 	(*STILL INCOMPLETE*)
 					let dir = Stack.pop stck and dist = Stack.pop stck in 
-					fprintf oc "\n\t%s" ("float _t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));
+					fprintf oc "\n\t%s" ("float _t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));	
 "^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
 "^dir^".y = "^dir^".y/_t"^string_of_int(!temp_counter)^";
 vec2cpp _t"^string_of_int(!temp_counter+1)^" = {"^dist^" * "^dir^".x + _ff.x , "^dist^" * "^dir^".y + _ff.y };
@@ -99,6 +105,19 @@ glEnd();
 					let varname = String.sub (y) (3) lenSubs in 
 					Stack.push (varname) stck;
 					()
+	|	If_Op	->	let e = Stack.pop stck in 
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(!lbl_counter) ^ "}");
+						Stack.push ("_L" ^ string_of_int (!lbl_counter)) lstck;
+						lbl_counter := !lbl_counter + 1
+	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(!lbl_counter));						
+						Stack.push ("_L" ^ string_of_int (!lbl_counter)) lstck;
+						lbl_counter := !lbl_counter + 1
+	|	Lbl(i)	->	let l1 = Stack.pop lstck and l0 = Stack.pop lstck in 
+					( 
+						fprintf oc "\n\t%s" (l0 ^ ":");	
+						print_endline ("JJJJJJJJ" ^ y);
+						Stack.push l1 lstck
+					)
 	| 	_ 		->	()	
 
 
