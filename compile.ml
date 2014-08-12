@@ -206,6 +206,7 @@ let rec gen_stmt = function
 						@ [(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
 						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
 						@ gen_stmt ts @ [(Lbl(li + 1), "LBL " ^ string_of_int(li + 1), "void")]
+  | Block(stmts)	->	List.concat (List.map gen_stmt stmts)
   
 let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)
