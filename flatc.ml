@@ -120,7 +120,7 @@ glEnd();
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
     |	While_Op(i)	->
 					let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("while (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
 	|	Lbl(i)	->	fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
 	| 	_ 		->	()	
