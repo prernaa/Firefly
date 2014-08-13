@@ -5,7 +5,7 @@
 %token LESS LESSEQ GREATER GREATEREQ EQUALSTO NOTEQUALS
 %token AND OR NOT
 %token LPAREN RPAREN LBRACE RBRACE
-%token OPENVEC COMMA CLOSEVEC
+%token OPENVEC COMMA CLOSEVEC LET
 %token ASSIGN PLUS MINUS TIMES DIVIDE ON OFF IF ELSE WHILE
 %token EOF
 %token <(float * float)> VEC2
@@ -29,7 +29,15 @@
 %%
 
 program:		
-	 stmts				{ List.rev $1 }
+	stmts fdefs							{ (List.rev $1, List.rev $2) }	
+	
+fdefs:
+	/* nothing */    					{ [] }
+  |	fdefs fdef 							{ ($2 :: $1) }
+	
+fdef:	
+    LET IDENTIFIER LPAREN RPAREN ASSIGN LBRACE stmt RBRACE
+										{ Fdef($2, $7) }
 	  
 stmts:	  
 	 /* nothing */ 						{ [] }
@@ -39,7 +47,7 @@ stmt:
 	expr_stmt							{ Expr($1) }	
   |	LBRACE stmts RBRACE					{ Block(List.rev $2) }
   | IF expr stmt ELSE stmt    			{ If($2, $3, $5) }
-  | WHILE expr stmt						{ While($2, $3) }
+  | WHILE expr stmt						{ While($2, $3) }  
 
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }	
@@ -75,4 +83,4 @@ expr:
 constant:
 	INTEGER								{ Integer($1) }
   |	FLOAT								{ Float($1)	}
-
+										

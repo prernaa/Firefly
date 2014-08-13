@@ -25,9 +25,11 @@ type element =
 	|	AndDone_Op
 	|	Not_Op
 	|	If_Op of int
+	|	EndIf_Op
 	| 	Goto of int
 	|	Lbl of int
 	|	While_Op of int
+	|	EndWhile_Op
 	
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -41,11 +43,34 @@ let frst (x,y,z) = x
 let scnd (x,y,z) = y
 let thrd (x,y,z) = z	
 
+(* This function takes a tuple; if the tuple refers to an undeclared var, throw an error.
+Otherwise, return the tuple. *)
+let checkUndeclaredVar v =
+(
+	match (frst v) with 
+		Id(_) when (thrd v) = "TypeToInfer" -> 
+			raise ( Failure ("Variable " ^ (String.sub (scnd v) (3) ((String.length (scnd v)) -4)) ^ " is undeclared!") ) | _ -> ();
+	v
+	
+	(*
+	if ((String.length (scnd v)) > 3) then (* Check we have a possible variable *)
+	(
+		let idprefix = String.sub (scnd v) (0) (3) and 
+		varname = String.sub (scnd v) (3) ((String.length (scnd v)) -4) in
+		if ((idprefix = "ID(") && ((thrd v) = "TypeToInfer")) then
+		(
+			raise ( Failure ("Variable " ^ (varname) ^ " is undeclared!") )
+		)
+	);*)
+)
+	
+
 let evalTuple (x,y,z) g i = (match x with
 		Int(v) ->  Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
 	| 	Flt(v) -> Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
 	|	Add_Op	| Minus_Op | Multiply_Op | Divide_Op -> 
-					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
+					let t1 = checkUndeclaredVar (Stack.pop tempStack) 
+					and t2 = checkUndeclaredVar (Stack.pop tempStack) in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
@@ -64,7 +89,8 @@ let evalTuple (x,y,z) g i = (match x with
 					)
 	|	LessThan_Op	| LessThanEq_Op | GreaterThan_Op | GreaterThanEq_Op | 
 		 EqualsTo_Op | NotEqualsTo_Op	->
-					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
+					let t1 = checkUndeclaredVar (Stack.pop tempStack) 
+					and t2 = checkUndeclaredVar (Stack.pop tempStack) in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
@@ -82,8 +108,8 @@ let evalTuple (x,y,z) g i = (match x with
 						)
 					)
 	|	OrDone_Op | AndDone_Op	->
-					let t1 = Stack.pop tempStack and tNone = Stack.pop tempStack 
-					and t2 = Stack.pop tempStack
+					let t1 = checkUndeclaredVar (Stack.pop tempStack) and tNone = Stack.pop tempStack 
+					and t2 = checkUndeclaredVar (Stack.pop tempStack)
 					in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
@@ -99,9 +125,9 @@ let evalTuple (x,y,z) g i = (match x with
 							if (v1 <> "bool") then
 							(
 								if (x = OrDone_Op) then
-									raise ( Failure ("Invalid type: " ^ v2 ^ "; right-hand operand of || must be bool"))
+									raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of || must be bool"))
 								else
-									raise ( Failure ("Invalid type: " ^ v2 ^ "; right-hand operand of && must be bool"))
+									raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of && must be bool"))
 							);
 							
 							Stack.push (x,y,z) tempStack
@@ -109,7 +135,7 @@ let evalTuple (x,y,z) g i = (match x with
 						)
 					)
 	|	Or_Op(i) | And_Op(i) ->	Stack.push (x,y,z) tempStack; Stack.push (x,y,z) semStack
-	|	Not_Op	->		let t1 = Stack.pop tempStack in
+	|	Not_Op	->		let t1 = checkUndeclaredVar (Stack.pop tempStack) in
 						(
 							let v1 = (thrd t1) in
 							(
@@ -142,7 +168,7 @@ let evalTuple (x,y,z) g i = (match x with
 							Stack.push (x,y,z) tempStack
 							(* We do NOT add ID to semantic stack because we don't know its type in this case. *)
 						)				
-	|	Asn_Op	->	let v = Stack.pop tempStack and e = Stack.pop tempStack in
+	|	Asn_Op	->	let v = Stack.pop tempStack and e = checkUndeclaredVar(Stack.pop tempStack) in
 					(
 						(*
 						(* Check v is an actual ID *)
@@ -156,17 +182,6 @@ let evalTuple (x,y,z) g i = (match x with
 						else
 						(
 						*)
-						
-						(* If performing a DAsn or Asn, first check if RHS is an undeclared variable. *)
-						if ((String.length (scnd e)) > 3) then (* Check we have a possible variable *)
-						(
-							let idprefix = String.sub (scnd e) (0) (3) and 
-							varname = String.sub (scnd e) (3) ((String.length (scnd e)) -4) in
-							if ((idprefix = "ID(") && ((thrd e) = "TypeToInfer")) then
-							(
-								raise ( Failure ("Variable " ^ (varname) ^ " is undeclared!") )
-							)
-						);
 						
 						(*Stack.push e semStack; *) (* temporary removal!!! *)
 						(* ^ removed this line because expressions now push themselves to sem stack *)
@@ -196,7 +211,8 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 						)
 					)
-	|	Vec2_Op	->	let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
+	|	Vec2_Op	->	let t1 = checkUndeclaredVar(Stack.pop tempStack) 
+					and t2 = checkUndeclaredVar(Stack.pop tempStack) in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
@@ -213,7 +229,8 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 						)
 					)
-	|	On_Op	->	let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
+	|	On_Op	->	let t1 = checkUndeclaredVar(Stack.pop tempStack) 
+					and t2 = checkUndeclaredVar(Stack.pop tempStack) in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
@@ -234,7 +251,7 @@ let evalTuple (x,y,z) g i = (match x with
 							;Stack.push (x,y,v1) semStack (* temporary add!!! *)
 						)
 					)
-	|	If_Op(i)-> 	let t1 = Stack.pop tempStack in
+	|	If_Op(i)-> 	let t1 = checkUndeclaredVar(Stack.pop tempStack) in
 						let v1 = (thrd t1) in
 							if (v1 <> "bool") then
 							(								
@@ -245,7 +262,8 @@ let evalTuple (x,y,z) g i = (match x with
 								(*Stack.push t1 semStack;*)																
 								Stack.push (x,y,z) semStack;
 							)
-	|	While_Op(i)-> 	let t1 = Stack.pop tempStack in
+	|	EndIf_Op	->	Stack.push (x,y,z) semStack;
+	|	While_Op(i)-> 	let t1 = checkUndeclaredVar(Stack.pop tempStack) in
 						let v1 = (thrd t1) in
 							if (v1 <> "bool") then
 							(								
@@ -256,6 +274,7 @@ let evalTuple (x,y,z) g i = (match x with
 								(*Stack.push t1 semStack;*)																
 								Stack.push (x,y,z) semStack;
 							)
+	|	EndWhile_Op	->	Stack.push (x,y,z) semStack;
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
 	|	Lbl(i)	->	Stack.push (x, y, z) semStack;																
 	|	_ -> ()

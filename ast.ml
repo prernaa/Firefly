@@ -19,10 +19,16 @@ type stmt =
 	Expr of expr
   |	Block of stmt list
   | If of expr * stmt * stmt
-  | While of expr * stmt
+  | While of expr * stmt  
   
 type stmts = 
 	stmt list
+
+type fdef = 
+    Fdef of string * stmt
+
+type fdefs =
+	fdef list
 	
 type program = 
-	stmts
+	stmts * fdefs

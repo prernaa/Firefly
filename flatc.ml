@@ -112,16 +112,6 @@ let c_statement (x, y, z) ti li oc= let tempType = getTempType(!temp_counter) in
 					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					   	temp_counter:=!temp_counter+1;
 					   	()
-	(*|	Or_Op -> 		let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					   	fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" || "^op1^";");
-					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
-					   	temp_counter:=!temp_counter+1;
-					   	() *)
-	(*|	And_Op -> 		let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					   	fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" && "^op1^";");
-					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
-					   	temp_counter:=!temp_counter+1;
-					   	()*)
 	|	Not_Op	-> 	
 						let op1 = Stack.pop stck in
 					   	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = !"^op1^";");
@@ -149,8 +139,9 @@ glEnd();
 ");
 					temp_counter:=!temp_counter+1;
 					temp_counter:=!temp_counter+1;
-					(*Stack.push ("_t"^string_of_int(!temp_counter-1)) stck;*)
-					Stack.push ("_ff") stck;
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = _ff;");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					temp_counter:=!temp_counter+1;
 					()
 	|   Off_Op	->  ()
 	|   DAsn_Op ->  
@@ -168,7 +159,8 @@ glEnd();
 					Stack.push (varname) stck;
 					()
 	|	If_Op(i)->	let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; } {");												
+	|	EndIf_Op->	fprintf oc "\n\t%s" ("}")						
 	|	Or_Op(i) ->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
     |	And_Op(i) ->let e = Stack.pop stck in 
@@ -181,11 +173,11 @@ glEnd();
     |	AndDone_Op -> 	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = _t"^string_of_int(!temp_counter-4)^" && "^"_t"^string_of_int(!temp_counter-1)^";");
 					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					   	temp_counter:=!temp_counter+1;
-	|	While_Op(i)	->
-					let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+	|	While_Op(i)	->	let e = Stack.pop stck in 
+						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }{");												
+	|	EndWhile_Op->	fprintf oc "\n\t%s" ("}")	
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
-	|	Lbl(i)	->	fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
+	|	Lbl(i)	->	fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":;");
 	| 	_ 		->	()	
 
 
