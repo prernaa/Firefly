@@ -9,6 +9,8 @@ type element =
 	|	Vec2_Op
 	|	Add_Op
 	|	Minus_Op
+	|	Multiply_Op
+	|	Divide_Op
 	|	On_Op
 	|	Off_Op
 	|	LessThan_Op
@@ -16,15 +18,16 @@ type element =
 	|	GreaterThan_Op
 	|	GreaterThanEq_Op
 	|	EqualsTo_Op
+	|	NotEqualsTo_Op
+	|	Or_Op of int
+	|	OrDone_Op
+	|	And_Op of int
+	|	AndDone_Op
+	|	Not_Op
 	|	If_Op of int
 	| 	Goto of int
 	|	Lbl of int
 	|	While_Op of int
-
-let type_to_string x = (match x with
-		Asn_Op -> "Asn_Op"
-	|	DAsn_Op -> "DAsn_Op"
-	|	_ ->	"Unknown Type")
 	
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -41,7 +44,7 @@ let thrd (x,y,z) = z
 let evalTuple (x,y,z) g i = (match x with
 		Int(v) ->  Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
 	| 	Flt(v) -> Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
-	|	Add_Op	| Minus_Op -> 
+	|	Add_Op	| Minus_Op | Multiply_Op | Divide_Op -> 
 					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
@@ -60,7 +63,7 @@ let evalTuple (x,y,z) g i = (match x with
 						)
 					)
 	|	LessThan_Op	| LessThanEq_Op | GreaterThan_Op | GreaterThanEq_Op | 
-		 EqualsTo_Op	->
+		 EqualsTo_Op | NotEqualsTo_Op	->
 					let t1 = Stack.pop tempStack and t2 = Stack.pop tempStack in
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
@@ -78,6 +81,49 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 						)
 					)
+	|	OrDone_Op | AndDone_Op	->
+					let t1 = Stack.pop tempStack and tNone = Stack.pop tempStack 
+					and t2 = Stack.pop tempStack
+					in
+					(
+						let v1 = (thrd t1) and v2 = (thrd t2) in
+						(
+							if (v2 <> "bool") then
+							(
+								if (x = OrDone_Op) then
+									raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of || must be bool"))
+								else
+									raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of && must be bool"))
+							);
+							
+							if (v1 <> "bool") then
+							(
+								if (x = OrDone_Op) then
+									raise ( Failure ("Invalid type: " ^ v2 ^ "; right-hand operand of || must be bool"))
+								else
+									raise ( Failure ("Invalid type: " ^ v2 ^ "; right-hand operand of && must be bool"))
+							);
+							
+							Stack.push (x,y,z) tempStack
+							;Stack.push (x,y,z) semStack (* temporary add!! *)
+						)
+					)
+	|	Or_Op(i) | And_Op(i) ->	Stack.push (x,y,z) tempStack; Stack.push (x,y,z) semStack
+	|	Not_Op	->		let t1 = Stack.pop tempStack in
+						(
+							let v1 = (thrd t1) in
+							(
+								if (v1 <> "bool") then
+								(
+									raise ( Failure ("Invalid type: " ^ v1 ^ "; NOT must be applied to a bool.") )
+								)
+								else
+								(
+									Stack.push (x,y,z) tempStack
+									;Stack.push (x,y,z) semStack
+								)
+							)
+						)
 	|	Id(v)	-> 		if List.exists (fun s -> (fst s) = "ID(" ^ v ^ ")") (Array.to_list g)
 						then 
 						(
@@ -173,7 +219,6 @@ let evalTuple (x,y,z) g i = (match x with
 						(
 							if (v2 <> "float") then
 							(
-								print_endline ("v2 = " ^ (scnd t2) ^ " " ^ (thrd t2));
 								raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of ON must be float"))
 							);
 							

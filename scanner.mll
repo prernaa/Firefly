@@ -7,6 +7,8 @@ rule token = parse
 | "/*"		{comment lexbuf}
 | '+'      	{ PLUS }
 | '-'		{ MINUS }
+| '*'		{ TIMES }
+| '/'		{ DIVIDE }
 | '('		{ LPAREN }
 | ')'		{ RPAREN }
 | '{'      	{ LBRACE }
@@ -19,6 +21,10 @@ rule token = parse
 | '>'		{ GREATER }
 | ">="		{ GREATEREQ }
 | "=="		{ EQUALSTO }
+| "!="		{ NOTEQUALS }
+| "&&"		{ AND }
+| "||"		{ OR }
+| '!'		{ NOT }
 | ['0'-'9']+ as lxm 		{ INTEGER(int_of_string lxm) }
 | "on"						{ ON }
 | "off"						{ OFF }

@@ -1,5 +1,6 @@
-type op = Add | Minus | LessThan | LessThanEq | GreaterThan | GreaterThanEq | 
-			EqualsTo| On | Off
+type op = Add | Minus | Multiply | Divide | LessThan | LessThanEq | 
+			GreaterThan | GreaterThanEq | EqualsTo | NotEqualsTo | On | Off |
+			Or | And
 
 type constant =
 	Integer of int
@@ -12,6 +13,7 @@ type expr =
   | Vec2 of expr * expr
   | Binop of expr * op * expr
   | Assign of string * expr  
+  | Not of expr
   
 type stmt =
 	Expr of expr

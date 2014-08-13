@@ -5,7 +5,18 @@ open Printf
 (*let file = "output.cpp"
 let oc = open_out file*)
 
+let tvarTbl = Hashtbl.create 100 
+let a = Hashtbl.add tvarTbl 1 "int"
+let a = Hashtbl.clear tvarTbl
 
+let getTempType index = 
+(
+	if Hashtbl.mem tvarTbl index then
+		Hashtbl.find tvarTbl index
+	else
+		""
+)
+		
 let stck = Stack.create ()
 let a = Stack.push ("hey") stck
 let a = Stack.pop stck
@@ -30,61 +41,100 @@ let lbl_counter = ref(0)
 
 (* We assume that a variable called _firefly is declared the initcpp code *)
 
-let c_statement (x, y, z) ti li oc= match x with		
+let c_statement (x, y, z) ti li oc= let tempType = getTempType(!temp_counter) in
+		let typePrefix = match tempType with "" -> z | _ -> "" in
+		match x with		
 		Int(v) 	->  (*seek_out oc flen;*)
 					(*let flen = out_channel_length oc in 
 					seek_out oc flen;
 					print_endline("");*)
-					fprintf oc "\n\t%s" ("int _t"^ string_of_int(!temp_counter)^ " = "^string_of_int(v)^";");
+					fprintf oc "\n\t%s" (typePrefix ^ " _t"^ string_of_int(!temp_counter)^ " = "^string_of_int(v)^";");
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()	
-	| 	Flt(v) 	-> 	fprintf oc "\n\t%s" ("float _t"^ string_of_int(!temp_counter)^ " = "^string_of_float(v)^";");
+	| 	Flt(v) 	-> 	fprintf oc "\n\t%s" (typePrefix ^" _t" ^ string_of_int(!temp_counter)^ " = "^string_of_float(v)^";");
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
 	|	Add_Op	-> 	let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" + "^op1^";");
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" + "^op1^";");
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
 	|	Minus_Op -> let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" - "^op1^";");
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" - "^op1^";");
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
-					()	
-	|	LessThan_Op	-> let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					   fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" < "^op1^";");
-					   Stack.push ("_t"^string_of_int(!temp_counter)) stck;
-					   temp_counter:=!temp_counter+1;
-					   () 	
-	|	LessThanEq_Op	-> let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					   	   fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" <= "^op1^";");
-					   	   Stack.push ("_t"^string_of_int(!temp_counter)) stck;
-					   	   temp_counter:=!temp_counter+1;
-					   	   () 
-	|   GreaterThan_Op -> let op1 = Stack.pop stck and op2 = Stack.pop stck in
-						  fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" > "^op1^";");
-						  Stack.push ("_t"^string_of_int(!temp_counter)) stck;
-						  temp_counter:=!temp_counter+1;
+					()
+	|	Multiply_Op -> 
+					let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" * "^op1^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					temp_counter:=!temp_counter+1;
+					()
+	|	Divide_Op -> 
+					let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" / "^op1^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					temp_counter:=!temp_counter+1;
+					()					
+	|	LessThan_Op	-> 
+					let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" < "^op1^";");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					temp_counter:=!temp_counter+1;
+					() 	
+	|	LessThanEq_Op	-> 
+							let op1 = Stack.pop stck and op2 = Stack.pop stck in
+							fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" <= "^op1^";");
+							Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+							temp_counter:=!temp_counter+1;
+							() 
+	|   GreaterThan_Op -> 
+							let op1 = Stack.pop stck and op2 = Stack.pop stck in
+							fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" > "^op1^";");
+							Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+							temp_counter:=!temp_counter+1;
 						  ()
 	|	GreaterThanEq_Op -> let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					   	    fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" >= "^op1^";");
+					   	    fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" >= "^op1^";");
 					   	    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					   	    temp_counter:=!temp_counter+1;
 					   	    ()
 	|	EqualsTo_Op	-> 	let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					   	fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" == "^op1^";");
+					   	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" == "^op1^";");
 					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					   	temp_counter:=!temp_counter+1;
 					   	()
-	|	Vec2_Op	-> 	let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = {"^op2^" , "^op1^"};");
+	|	NotEqualsTo_Op	-> 	
+						let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					   	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" != "^op1^";");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+					   	()
+	(*|	Or_Op -> 		let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					   	fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" || "^op1^";");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+					   	() *)
+	(*|	And_Op -> 		let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					   	fprintf oc "\n\t%s" (z^" _t"^ string_of_int(!temp_counter)^ " = "^op2^" && "^op1^";");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+					   	()*)
+	|	Not_Op	-> 	
+						let op1 = Stack.pop stck in
+					   	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = !"^op1^";");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+					   	()
+	|	Vec2_Op	-> 	
+					let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = {"^op2^" , "^op1^"};");
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
-	|	On_Op	-> 	(*STILL INCOMPLETE*)
-					let dir = Stack.pop stck and dist = Stack.pop stck in 
+	|	On_Op	-> 	let dir = Stack.pop stck and dist = Stack.pop stck in 
 					fprintf oc "\n\t%s" ("float _t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));	
 "^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
 "^dir^".y = "^dir^".y/_t"^string_of_int(!temp_counter)^";
@@ -103,8 +153,9 @@ glEnd();
 					Stack.push ("_ff") stck;
 					()
 	|   Off_Op	->  ()
-	|   DAsn_Op ->  let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					fprintf oc "\n\t%s" (z^" "^ op1 ^ " = "^op2^";");
+	|   DAsn_Op ->  
+					let op1 = Stack.pop stck and op2 = Stack.pop stck in
+					fprintf oc "\n\t%s" (typePrefix^" "^ op1 ^ " = "^op2^";");
 					(*fprintf oc "\n\t%s" (op1 ^ " = "^op2^";");*)
 					Stack.push (op1) stck;
 					()
@@ -118,7 +169,19 @@ glEnd();
 					()
 	|	If_Op(i)->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
-    |	While_Op(i)	->
+	|	Or_Op(i) ->	let e = Stack.pop stck in 
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+    |	And_Op(i) ->let e = Stack.pop stck in 
+						fprintf oc "\n\t%s" ("bool _t"^string_of_int(!temp_counter+2)^" = false;");
+						Hashtbl.replace tvarTbl (!temp_counter+2) "bool";
+						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+    |	OrDone_Op -> 	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = _t"^string_of_int(!temp_counter-4)^" || "^"_t"^string_of_int(!temp_counter-1)^";");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+    |	AndDone_Op -> 	fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = _t"^string_of_int(!temp_counter-4)^" && "^"_t"^string_of_int(!temp_counter-1)^";");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+	|	While_Op(i)	->
 					let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																

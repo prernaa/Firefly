@@ -183,16 +183,32 @@ let rec gen_expr = function
 		  | Off -> v1 @ v2 @ [(Off_Op,"OFF","vec2cpp")]
 		  | Add -> v1 @ v2 @ [(Add_Op,"ADD","TypeToInfer")]
 		  | Minus -> v1 @ v2 @ [(Minus_Op,"MINUS","TypeToInfer")]
+		  | Multiply -> v1 @ v2 @ [(Multiply_Op,"MULTIPLY","TypeToInfer")]
+		  | Divide -> v1 @ v2 @ [(Divide_Op,"DIVIDE","TypeToInfer")]
 		  | LessThan -> v1 @ v2 @ [(LessThan_Op,"LESSTHAN","bool")]
 		  | LessThanEq -> v1 @ v2 @ [(LessThanEq_Op,"LESSTHANEQ","bool")]
 		  | GreaterThan -> v1 @ v2 @ [(GreaterThan_Op,"GREATERTHAN","bool")]
 		  | GreaterThanEq -> v1 @ v2 @ [(GreaterThanEq_Op,"GREATERTHANEQ","bool")]
 		  | EqualsTo -> v1 @ v2 @ [(EqualsTo_Op,"EQUALSTO","bool")]
+		  | NotEqualsTo -> v1 @ v2 @ [(NotEqualsTo_Op,"NOTEQUALSTO","bool")]
+		  | Or -> 		lbl_index := !lbl_index + 10;
+						Stack.push !lbl_index lblStack;
+						let li = Stack.top lblStack in
+						v1 @ [(Or_Op(li),"OR " ^ string_of_int(li),"bool")] @ v2 
+						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
+						@ [(OrDone_Op,"ORDONE","bool")]
+		  | And -> 		lbl_index := !lbl_index + 10;
+						Stack.push !lbl_index lblStack;
+						let li = Stack.top lblStack in
+						v1 @ [(And_Op(li),"AND " ^ string_of_int(li),"bool")] @ v2 
+						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
+						@ [(AndDone_Op,"ANDDONE","bool")]
 		)
   | Identifier(x) -> [(Id(x),"ID(" ^ x ^ ")","TypeToInfer")]
   | Assign(v,e) -> 	gen_expr e @ gen_expr (Identifier(v)) @ [(Asn_Op,"Asn","TypeToInfer")]
 					(* globals.(!globals_index) <- (v, "Type"); 
 					globals_index := !globals_index + 1; *)
+  | Not(e)	->	gen_expr e @ [(Not_Op,"NOT","bool")]
   | _ -> []  	
 
 let rec gen_stmt = function
