@@ -1,5 +1,15 @@
-var i = 0
-ver j = 0.3
+var1 = 0
+
+
+let myfun() =
+{
+	var1 = 1
+}
+
+
+/*
+i = 0
+j = 0.3
 while 20 > i
 {
 	0.05 on [1.0, j]
@@ -9,7 +19,7 @@ while 20 > i
 	else
 		j = j + 0.2
 }
-	
+*/
 	
 
 

@@ -215,7 +215,14 @@ let rec gen_stmt = function
 						@ gen_stmt ts 
 						@ [(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
 						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
-  | Block(stmts)	->	List.concat (List.map gen_stmt stmts)
+  | Block(stmts)	->	List.concat (List.map gen_stmt stmts)  
+
+let rec gen_fdef = function  
+	Fdef(n, b)	-> 	lbl_index := !lbl_index + 10;
+					let li = !lbl_index in
+					[(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
+					@ (gen_stmt b)
+					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
   
 let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)
@@ -226,6 +233,12 @@ let print_gen x = match x with
 			print_endline ""
 			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *) 
 
+let print_gen_fdefs = function
+	_	->	print_endline ("this is where func defs start")
+			
 let translate = function
-	 (*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
-	 stmts -> initCppFile(); List.iter print_gen stmts;  closeCppFile()
+	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
+	(stmts, fdefs) 	-> 	initCppFile();
+						List.iter print_gen stmts;  
+						List.iter print_gen_fdefs fdefs;
+						closeCppFile()
