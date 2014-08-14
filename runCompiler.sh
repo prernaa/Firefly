@@ -72,7 +72,12 @@ then
 	DeleteCpp
 	
 	# Compile the source .ff file.
-	./firefly3D.byte < $1
+	if [ $silent = 1 ]
+	then
+		./firefly3D.byte < $1 > nul
+	else
+		./firefly3D.byte < $1
+	fi
 	mv output.cpp "$filename".cpp
 	
 	# If user chose "-c" option, run C++ compiler on Windows and execute the resulting .exe file.

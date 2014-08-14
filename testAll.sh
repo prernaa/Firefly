@@ -23,7 +23,7 @@ Check()
 	basename="${basename%.*}"
 	basedir=`dirname $1`
 		
-	./runCompiler.sh $1
+	./runCompiler.sh -s $1
 	
 	Compare $basedir/$basename.cpp $EXPDIR/$basename.out $basedir/$basename.diff
 	
