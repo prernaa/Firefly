@@ -19,12 +19,16 @@ let oc = open_out file
 let initCppFile = function 
 	_ ->	fprintf oc "%s\n\n\t" "\n\n
 #include <iostream>
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 #include <GL/glut.h>  // GLUT, includes glu.h and gl.h
 #include <math.h>
 #ifdef _MSC_VER                         // Check if MS Visual C compiler
 #  pragma comment(lib, \"opengl32.lib\")  // Compiler-specific directive to avoid manually configuration
 #  pragma comment(lib, \"glu32.lib\")     // Link libraries
-#endif			
+#endif	
+	
 using namespace std;
 struct vec2cpp{
 	float x;
