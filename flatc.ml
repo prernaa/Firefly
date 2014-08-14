@@ -178,9 +178,9 @@ glEnd();
 	|	EndWhile_Op->	fprintf oc "\n\t%s" ("}")	
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
 	|	Lbl(i)	->	if(i mod 2 = 0) then
-						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{;");
+						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{");
 					if(i mod 2 = 1) then
-						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":;");
+						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
 	| 	_ 		->	()	
 
 
