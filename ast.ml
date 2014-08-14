@@ -14,6 +14,7 @@ type expr =
   | Binop of expr * op * expr
   | Assign of string * expr  
   | Not of expr
+  | Sqrt of expr
   
 type stmt =
 	Expr of expr

@@ -1,4 +1,20 @@
-i = 0
+var1 = sqrt(4)
+/*0.7 off [1,0]
+x = 0.7
+y = 0.0
+// ((x*x)/0.49) + ((y*y)/0.09) = 1
+while !(x==0.4)
+{
+	0.05 on [x, y]
+	i = i + 1*2/2
+	if i > 10		
+		j = j - 0.2
+	else
+		j = j + 0.2
+	endif		
+}
+*/
+/*i = 0
 j = 0.3
 varx = 0
 let f3() =
@@ -9,7 +25,7 @@ let f1() =
 {
 	varx = 10
 }
-
+*/
 
 /*var1 = 2
 if 1 > 0 var1 = 100 else var1 = 200

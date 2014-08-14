@@ -235,6 +235,7 @@ let rec gen_expr = function
 					(* globals.(!globals_index) <- (v, "Type"); 
 					globals_index := !globals_index + 1; *)
   | Not(e)	->	gen_expr e @ [(Not_Op,"NOT","bool")]
+  | Sqrt(e) -> gen_expr e @ [(Sqrt,"SQRT","TypeToInfer")]
   | _ -> []  	
 
 let rec gen_stmt = function
@@ -269,7 +270,7 @@ let rec gen_fdef = function
 					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
   
 let print_gen x = match x with
-	_ -> 	(*List.iter (fun (fs, sn, thr) -> print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
+	_ -> 	List.iter (fun (fs, sn, thr) -> print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );
 			(*print_endline ("SYN (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
 			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
