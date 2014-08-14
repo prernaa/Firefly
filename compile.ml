@@ -277,6 +277,7 @@ let rec gen_fdef = function
 					@ [(Flbl(n), "FLBL " ^ n, "void")] 
 					@ (gen_stmt b)
 					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
+					@ [(Endfdef, "ENDFDEF " ^ string_of_int(li), "bool")] 
   
 let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> *)
