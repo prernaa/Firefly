@@ -1,0 +1,233 @@
+
+
+
+#include <iostream>
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+#include <GL/glut.h>  // GLUT, includes glu.h and gl.h
+#include <math.h>
+#ifdef _MSC_VER                         // Check if MS Visual C compiler
+#  pragma comment(lib, "opengl32.lib")  // Compiler-specific directive to avoid manually configuration
+#  pragma comment(lib, "glu32.lib")     // Link libraries
+#endif	
+	
+using namespace std;
+struct vec2cpp{
+	float x;
+	float y;
+	vec2cpp& operator=(const vec2cpp& other)
+	{
+		x = other.x;
+		y = other.y;
+		return *this;
+	}
+	vec2cpp& operator+(const vec2cpp& other)
+	{
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+	vec2cpp& operator-(const vec2cpp& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
+	bool operator==(const vec2cpp& other)
+	{
+		return (x==other.x && y==other.y);
+	}
+	bool operator!=(const vec2cpp& other)
+	{
+		return !(x==other.x && y==other.y);
+	}
+};
+vec2cpp _ff = {0,0};
+int myprogram();
+void DrawAxes()
+{
+	glBegin(GL_LINES);
+		glColor3f(1.0, 0.0, 0.0);
+		glVertex2f(-1.0f, 0.0f);
+		glVertex2f(+1.0f, 0.0f);
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex2f(0.0f, -1.0f);
+		glVertex2f(0.0f, +1.0f);
+	glEnd();
+}
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+   	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+
+	// Render a color-cube consisting of 6 quads with different colors
+   	glLoadIdentity();                 // Reset the model-view matrix
+
+   	DrawAxes();
+	myprogram();
+
+  	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
+}
+void init() {
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glColor3f(0.0, 0.0, 0.0);
+   	glClearDepth(1.0f);                   // Set background depth to farthest
+   	glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+   	glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+   	glShadeModel(GL_SMOOTH);   // Enable smooth shading
+   	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+}
+void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
+// Compute aspect ratio of the new window
+   if (height == 0) height = 1;                // To prevent divide by 0
+   GLfloat aspect = (GLfloat)width / (GLfloat)height;
+ 
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+ 
+   // Set the aspect ratio of the clipping area to match the viewport
+   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+   glLoadIdentity();
+   if (width >= height) {
+     // aspect >= 1, set the height from -1 to 1, with larger width
+      gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+   } else {
+      // aspect < 1, set the width to -1 to 1, with larger height
+     gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
+   }
+}
+int main(int argc, char** argv)
+{
+	glutInit(&argc, argv);          // Initialize GLUT
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);	// Enable double buffering
+   	glutInitWindowSize(640, 480);   // Set the window's initial width & height - non-square
+   	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+   	glutCreateWindow("Model Transform");  // Create window with the given title
+   	glutDisplayFunc(display);       // Register callback handler for window re-paint event
+   	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+   	init();                       // Our own OpenGL initialization
+   	glutMainLoop();                 // Enter the infinite event-processing loop
+	return 0;
+}
+int myprogram(){
+
+	
+	float _t0 = 0.;
+	float i = _t0;
+	int _t1 = 3;
+	int _t2 = 2;
+	bool _t3 = _t1 > _t2;
+	if (_t3) { goto _L20; } {{
+	float _t4 = 0.;
+	i = _t4;
+	goto _L21;
+	}_L20:{
+	float _t5 = 1.;
+	i = _t5;
+	}}
+	_L21:
+	int _t6 = 0;
+	int _t7 = 1;
+	vec2cpp _t8 = {_t6 , _t7};
+	float _t9 = sqrt((_t8.x * _t8.x + _t8.y * _t8.y));	
+_t8.x = _t8.x/_t9;
+_t8.y = _t8.y/_t9;
+vec2cpp _t10 = {i * _t8.x + _ff.x , i * _t8.y + _ff.y };
+glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(_ff.x, _ff.y);
+	glVertex2f(_t10.x , _t10.y);
+glEnd();
+_ff.x = _t10.x;
+_ff.y = _t10.y;
+
+	vec2cpp _t11 = _ff;
+	int _t12 = 3;
+	int _t13 = 2;
+	bool _t14 = _t12 < _t13;
+	if (_t14) { goto _L40; } {{
+	float _t15 = 1.;
+	i = _t15;
+	goto _L41;
+	}_L40:{
+	float _t16 = 0.;
+	i = _t16;
+	}}
+	_L41:
+	int _t17 = 1;
+	int _t18 = 0;
+	vec2cpp _t19 = {_t17 , _t18};
+	float _t20 = sqrt((_t19.x * _t19.x + _t19.y * _t19.y));	
+_t19.x = _t19.x/_t20;
+_t19.y = _t19.y/_t20;
+vec2cpp _t21 = {i * _t19.x + _ff.x , i * _t19.y + _ff.y };
+glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(_ff.x, _ff.y);
+	glVertex2f(_t21.x , _t21.y);
+glEnd();
+_ff.x = _t21.x;
+_ff.y = _t21.y;
+
+	vec2cpp _t22 = _ff;
+	int _t23 = 3;
+	int _t24 = 3;
+	bool _t25 = _t23 == _t24;
+	if (_t25) { goto _L60; } {{
+	float _t26 = 0.;
+	i = _t26;
+	goto _L61;
+	}_L60:{
+	float _t27 = 1.;
+	i = _t27;
+	}}
+	_L61:
+	int _t28 = 0;
+	int _t29 = -1;
+	vec2cpp _t30 = {_t28 , _t29};
+	float _t31 = sqrt((_t30.x * _t30.x + _t30.y * _t30.y));	
+_t30.x = _t30.x/_t31;
+_t30.y = _t30.y/_t31;
+vec2cpp _t32 = {i * _t30.x + _ff.x , i * _t30.y + _ff.y };
+glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(_ff.x, _ff.y);
+	glVertex2f(_t32.x , _t32.y);
+glEnd();
+_ff.x = _t32.x;
+_ff.y = _t32.y;
+
+	vec2cpp _t33 = _ff;
+	int _t34 = 0;
+	int _t35 = 2;
+	bool _t36 = _t34 != _t35;
+	if (_t36) { goto _L80; } {{
+	float _t37 = 0.;
+	i = _t37;
+	goto _L81;
+	}_L80:{
+	float _t38 = 1.;
+	i = _t38;
+	}}
+	_L81:
+	int _t39 = -1;
+	int _t40 = 0;
+	vec2cpp _t41 = {_t39 , _t40};
+	float _t42 = sqrt((_t41.x * _t41.x + _t41.y * _t41.y));	
+_t41.x = _t41.x/_t42;
+_t41.y = _t41.y/_t42;
+vec2cpp _t43 = {i * _t41.x + _ff.x , i * _t41.y + _ff.y };
+glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(_ff.x, _ff.y);
+	glVertex2f(_t43.x , _t43.y);
+glEnd();
+_ff.x = _t43.x;
+_ff.y = _t43.y;
+
+	vec2cpp _t44 = _ff;
+
+
+	return 0;
+}
+

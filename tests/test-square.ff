@@ -1,0 +1,17 @@
+v1 = [1,0]
+x = v1.x
+y = v1.y
+
+i = 4
+while (i > 0)
+{ 
+	0.5 on [x,y]
+	
+	x2 = (cos 90) * x - (sin 90) * y
+	y2 = (sin 90) * x + (cos 90) * y
+	
+	x = x2
+	y = y2
+	
+	i = i - 1
+}
