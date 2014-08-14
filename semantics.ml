@@ -27,6 +27,7 @@ type element =
 	|	If_Op of int
 	|	EndIf_Op	
 	| 	Goto of int
+	| 	GotoFun of string
 	|	Lbl of int
 	|	Flbl of string
 	|	While_Op of int
@@ -37,6 +38,7 @@ type element =
 	|	Getx_Op
 	|	Gety_Op
 	|   Endfdef 
+	| 	SetReturn of int
 	
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -381,6 +383,7 @@ let evalTuple (x,y,z) g i = (match x with
 	|	EndWhile_Op	->	Stack.push (x,y,z) semStack;
 	|	Endfdef	->	Stack.push (x,y,z) semStack;
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
+	|	Goto(s)	->	Stack.push (x, y, z) semStack;																
 	|	Lbl(i)	->	Stack.push (x, y, z) semStack;
 	|	Flbl(s)	->	Stack.push (x, y, z) semStack;																
 	|	_ -> ()

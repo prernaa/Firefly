@@ -54,6 +54,7 @@ stmt:
   |	LBRACE stmts RBRACE					{ Block(List.rev $2) }
   | IF expr stmt ELSE stmt ENDIF		{ If($2, $3, $5) }
   | WHILE expr stmt						{ While($2, $3) }  
+  | IDENTIFIER LPAREN RPAREN			{ Call ($1) }
 
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }	
