@@ -9,6 +9,7 @@
 %token SQRT SIN COS ASSIGN PLUS MINUS TIMES DIVIDE ON OFF IF ELSE WHILE ENDIF
 %token EOF
 %token <(float * float)> VEC2
+%token GETX GETY
 %token <string> IDENTIFIER
  
 %left LPAREN RPAREN
@@ -23,6 +24,7 @@
 %left OPENVEC COMMA CLOSEVEC
 %left PLUS MINUS
 %left TIMES DIVIDE
+%nonassoc GETX GETY
 %nonassoc UMINUS UPLUS
 
 %start program
@@ -86,6 +88,8 @@ expr:
   | SQRT expr							{ Sqrt($2) }
   | SIN expr							{ Sin($2) }
   | COS expr							{ Cos($2) }
+  | expr GETX							{ Getx($1) }
+  | expr GETY							{ Gety($1) }
   
 constant:
 	INTEGER								{ Integer($1) }

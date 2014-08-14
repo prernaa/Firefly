@@ -17,6 +17,8 @@ type expr =
   | Sqrt of expr
   | Sin of expr
   | Cos of expr
+  | Getx of expr
+  | Gety of expr
   
 type stmt =
 	Expr of expr

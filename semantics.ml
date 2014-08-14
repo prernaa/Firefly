@@ -33,6 +33,8 @@ type element =
 	|   Sqrt
 	|	Sin_Op
 	|	Cos_Op
+	|	Getx_Op
+	|	Gety_Op
 	
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -190,6 +192,36 @@ let evalTuple (x,y,z) g i = (match x with
 								if (v1 <> "int" && v1 <> "float") then
 								(
 									raise ( Failure ("Invalid type: " ^ v1 ^ "; Sqrt can only be applied to an int or float.") )
+								)
+								else
+								(
+									Stack.push (x,y,z) tempStack
+									;Stack.push (x,y,z) semStack
+								)
+							)
+						)
+	|   Getx_Op ->  	let t1 = checkUndeclaredVar (Stack.pop tempStack) in
+						(
+							let v1 = (thrd t1) in
+							(
+								if (v1 <> "vec2cpp") then
+								(
+									raise ( Failure ("Invalid type: " ^ v1 ^ "; You can only get x-element of a vec2.") )
+								)
+								else
+								(
+									Stack.push (x,y,z) tempStack
+									;Stack.push (x,y,z) semStack
+								)
+							)
+						)
+	|   Gety_Op ->  	let t1 = checkUndeclaredVar (Stack.pop tempStack) in
+						(
+							let v1 = (thrd t1) in
+							(
+								if (v1 <> "vec2cpp") then
+								(
+									raise ( Failure ("Invalid type: " ^ v1 ^ "; You can only get y-element of a vec2.") )
 								)
 								else
 								(

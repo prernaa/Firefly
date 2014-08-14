@@ -242,6 +242,8 @@ let rec gen_expr = function
   | Sqrt(e) -> gen_expr e @ [(Sqrt,"SQRT","TypeToInfer")]
   | Sin(e)	-> gen_expr e @ [(Sin_Op,"SIN","float")]
   | Cos(e)	-> gen_expr e @ [(Cos_Op,"COS","float")]
+  | Getx(e)	-> gen_expr e @ [(Getx_Op,"GETX","float")]
+  | Gety(e)	-> gen_expr e @ [(Gety_Op,"GETY","float")]
   | _ -> []  	
 
 let rec gen_stmt = function

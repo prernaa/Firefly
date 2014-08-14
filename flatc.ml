@@ -133,6 +133,16 @@ let c_statement (x, y, z) ti li oc= let tempType = getTempType(!temp_counter) in
 					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					   	temp_counter:=!temp_counter+1;
 					   	()
+	|	Getx_Op		->	let op1 = Stack.pop stck in
+						fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op1^".x;");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+					   	()
+	|	Gety_Op		->	let op1 = Stack.pop stck in
+						fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = "^op1^".y;");
+					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					   	temp_counter:=!temp_counter+1;
+					   	()
 	|	Vec2_Op	-> 	
 					let op1 = Stack.pop stck and op2 = Stack.pop stck in
 					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = {"^op2^" , "^op1^"};");
