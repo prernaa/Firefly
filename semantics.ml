@@ -28,6 +28,7 @@ type element =
 	|	EndIf_Op	
 	| 	Goto of int
 	| 	GotoFun of string
+	|	GotoReturn
 	|	Lbl of int
 	|	Flbl of string
 	|	While_Op of int
@@ -383,9 +384,12 @@ let evalTuple (x,y,z) g i = (match x with
 	|	EndWhile_Op	->	Stack.push (x,y,z) semStack;
 	|	Endfdef	->	Stack.push (x,y,z) semStack;
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
-	|	Goto(s)	->	Stack.push (x, y, z) semStack;																
+	|	Goto(s)	->	Stack.push (x, y, z) semStack;
+	|	GotoFun(fn) -> Stack.push (x, y, z) semStack;
+	|	GotoReturn	->	Stack.push (x, y, z) semStack;																
 	|	Lbl(i)	->	Stack.push (x, y, z) semStack;
 	|	Flbl(s)	->	Stack.push (x, y, z) semStack;																
+	| 	SetReturn(i)	->	Stack.push (x, y, z) semStack;
 	|	_ -> ()
 	)
 

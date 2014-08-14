@@ -215,12 +215,15 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }{");												
 	|	EndWhile_Op->	fprintf oc "\n\t%s" ("}")	
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
+	|	GotoFun(fn)	->	fprintf oc "\n\t%s" ("goto _L" ^ fn ^ ";");																
+	|	GotoReturn	->	fprintf oc "\n\t%s" ("goto *returnPath;");	
 	|	Lbl(i)	->	if(i mod 2 = 0) then
 						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{");
 					if(i mod 2 = 1) then
 						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
 	|  	Endfdef ->  fprintf oc "\n\t%s" ("}")
 	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":{");					
+	|   SetReturn(i)	->	fprintf oc "\n\t%s" ("returnPath = &&_L" ^ string_of_int i ^ ";");
 	| 	_ 		->	()	
 
 

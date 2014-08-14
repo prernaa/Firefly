@@ -1,11 +1,9 @@
 var = 0
-y = 0
-let f() = { y = y + 1 }
+yvar = 0
+let f() = { yvar = 1 }
 
 f()
-0.5 on [1, y]
-
-let g() = { var = var + 1 }
+0.5 on [1, yvar]
 
 
 /*

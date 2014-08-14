@@ -60,6 +60,7 @@ struct vec2cpp{
 		return !(x==other.x && y==other.y);
 	}
 };
+void* returnPath;
 vec2cpp _ff = {0,0};
 int myprogram();
 void DrawAxes()
@@ -281,7 +282,8 @@ let rec gen_fdef = function
 					[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
 					@ [(Flbl(n), "FLBL " ^ n, "void")] 
 					@ (gen_stmt b)
-					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
+					@ [(GotoReturn, "GOTO RET ", "void")] 
+					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 					
 					@ [(Endfdef, "ENDFDEF " ^ string_of_int(li), "bool")] 
   
 let print_gen x = match x with
