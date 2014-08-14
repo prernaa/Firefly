@@ -267,6 +267,28 @@ let evalTuple (x,y,z) g i = (match x with
 							;Stack.push (x,y,v1) semStack (* temporary add!!! *)
 						)
 					)
+	|   Off_Op  ->  let t1 = checkUndeclaredVar(Stack.pop tempStack) 
+					and t2 = checkUndeclaredVar(Stack.pop tempStack) in
+					(
+						let v1 = (thrd t1) and v2 = (thrd t2) in
+						(
+							if (v2 <> "float") then
+							(
+								raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of OFF must be float"))
+							);
+							
+							if (v1 <> "vec2cpp") then
+							(
+								raise ( Failure ("Invalid type: " ^ v1 ^ "; right-hand operand of OFF must be vec2"))
+							);
+							
+							(*Stack.push t2 semStack;*) (*t1 is vec2*) (* temporary removed!!! *)
+							(*Stack.push t1 semStack;*) (*t2 is distance*) (* temporary removed!!! *)
+							(*So, vec2 is pushed before distance*)
+							Stack.push (x,y,v1) tempStack
+							;Stack.push (x,y,v1) semStack (* temporary add!!! *)
+						)
+					)
 	|	If_Op(i)-> 	let t1 = checkUndeclaredVar(Stack.pop tempStack) in
 						let v1 = (thrd t1) in
 							if (v1 <> "bool") then

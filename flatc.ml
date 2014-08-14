@@ -138,9 +138,9 @@ glBegin(GL_LINES);
 \tglColor3f(0.0, 0.0, 0.0);
 \tglVertex2f(_ff.x, _ff.y);
 \tglVertex2f(_t"^string_of_int(!temp_counter+1)^".x , _t"^string_of_int(!temp_counter+1)^".y);
+glEnd();
 _ff.x = _t"^string_of_int(!temp_counter+1)^".x;
 _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
-glEnd();
 ");
 					temp_counter:=!temp_counter+1;
 					temp_counter:=!temp_counter+1;
@@ -148,7 +148,20 @@ glEnd();
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
-	|   Off_Op	->  ()
+	|   Off_Op	-> 	let dir = Stack.pop stck and dist = Stack.pop stck in 
+					fprintf oc "\n\t%s" ("float _t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));	
+"^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
+"^dir^".y = "^dir^".y/_t"^string_of_int(!temp_counter)^";
+vec2cpp _t"^string_of_int(!temp_counter+1)^" = {"^dist^" * "^dir^".x + _ff.x , "^dist^" * "^dir^".y + _ff.y };
+_ff.x = _t"^string_of_int(!temp_counter+1)^".x;
+_ff.y = _t"^string_of_int(!temp_counter+1)^".y;
+");
+					temp_counter:=!temp_counter+1;
+					temp_counter:=!temp_counter+1;
+					fprintf oc "\n\t%s" (typePrefix^" _t"^ string_of_int(!temp_counter)^ " = _ff;");
+					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
+					temp_counter:=!temp_counter+1;
+					()
 	|   DAsn_Op ->  
 					let op1 = Stack.pop stck and op2 = Stack.pop stck in
 					fprintf oc "\n\t%s" (typePrefix^" "^ op1 ^ " = "^op2^";");
