@@ -1,0 +1,14 @@
+var = 0
+y = 0
+let f() = { y = y + 1 }
+
+/*0.5 on [1, y]*/
+
+
+/*
+if var == 0
+	var = 1
+else
+	var = 2
+endif
+*/

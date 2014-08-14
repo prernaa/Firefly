@@ -198,7 +198,7 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 					()
 	|	If_Op(i)->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; } {{");												
-	|	EndIf_Op->	fprintf oc "\n\t%s" ("}}")						
+	|	EndIf_Op->	fprintf oc "\n\t%s" ("}}")							
 	|	Or_Op(i) ->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
     |	And_Op(i) ->let e = Stack.pop stck in 
@@ -219,6 +219,7 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{");
 					if(i mod 2 = 1) then
 						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
+	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":");					
 	| 	_ 		->	()	
 
 

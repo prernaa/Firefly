@@ -25,9 +25,10 @@ type element =
 	|	AndDone_Op
 	|	Not_Op
 	|	If_Op of int
-	|	EndIf_Op
+	|	EndIf_Op	
 	| 	Goto of int
 	|	Lbl of int
+	|	Flbl of string
 	|	While_Op of int
 	|	EndWhile_Op
 	|   Sqrt
@@ -378,7 +379,8 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 	|	EndWhile_Op	->	Stack.push (x,y,z) semStack;
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
-	|	Lbl(i)	->	Stack.push (x, y, z) semStack;																
+	|	Lbl(i)	->	Stack.push (x, y, z) semStack;
+	|	Flbl(s)	->	Stack.push (x, y, z) semStack;																
 	|	_ -> ()
 	)
 

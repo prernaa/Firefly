@@ -273,20 +273,25 @@ let rec gen_stmt = function
 let rec gen_fdef = function  
 	Fdef(n, b)	-> 	lbl_index := !lbl_index + 10;
 					let li = !lbl_index in
-					[(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
+					[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
+					@ [(Flbl(n), "FLBL " ^ n, "void")] 
 					@ (gen_stmt b)
 					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
   
 let print_gen x = match x with
-	_ -> 	List.iter (fun (fs, sn, thr) -> print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );
-			(*print_endline ("SYN (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
+	_ -> 	(*List.iter (fun (fs, sn, thr) -> *)
+				(*print_endline ("SYN (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
+				(*print_endline ("SEM (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
 			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
 			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *) 
 
 let print_gen_fdefs x = match x with
-	_	->	List.iter (fun (fs, sn, thr) -> print_endline ("DEF (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_fdef x) );
+	_	->	List.iter (fun (fs, sn, thr) -> 
+				(*print_endline ("DEF (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_fdef x) );*)
+				print_endline ("SEM (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_fdef x) (globals) globals_index);
+			generate_c (sa (gen_fdef x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
 			print_endline ""
 			
 let translate = function
