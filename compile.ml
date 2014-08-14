@@ -269,16 +269,16 @@ let rec gen_fdef = function
 					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
   
 let print_gen x = match x with
-	_ -> 	(*List.iter (fun (fs, sn, thr) -> 				*)
-				(*print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
-			(*print_endline ("TTT (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
+	_ -> 	(*List.iter (fun (fs, sn, thr) -> print_endline ("XXX (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
+			(*print_endline ("SYN (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
 			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
 			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *) 
 
-let print_gen_fdefs = function
-	_	->	print_endline ("this is where func defs start")
+let print_gen_fdefs x = match x with
+	_	->	List.iter (fun (fs, sn, thr) -> print_endline ("DEF (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_fdef x) );
+			print_endline ""
 			
 let translate = function
 	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
