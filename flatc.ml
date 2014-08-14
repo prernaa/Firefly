@@ -232,8 +232,11 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 let generate_c lst ti li oc globals globals_count= 
 	Stack.clear stck;
 	(*globals_to_file globals globals_count 0 oc;*)
+	print_endline "*****************";
+	print_endline "SEMANTIC STACK";
+	print_endline "*****************";
 	List.iter (fun (fs, sn, thr) -> 				
-					print_endline ("TTT (" ^ sn ^ "," ^ thr ^ ")")) lst; 
+					print_endline (" (" ^ sn ^ "," ^ thr ^ ")")) lst; 
 	List.iter (fun (x) -> c_statement x ti li oc) lst; 
 	
 	()

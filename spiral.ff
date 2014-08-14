@@ -1,0 +1,27 @@
+
+/* DRAW SPIRAL */
+
+v1 = [0.0,-1.0]
+
+x = v1.x
+y = v1.y
+
+angle = 0.0
+
+radius = 0.00001
+finalRadius = 0.017
+spiralIncrement = 0.000002
+
+while (radius < finalRadius)
+{
+	radius on [x,y]
+	
+	x2 = radius * (cos angle) 
+	y2 = radius * (sin angle) 
+	
+	x = x2
+	y = y2
+		
+	angle = angle + 1.0
+	radius = radius + spiralIncrement
+}

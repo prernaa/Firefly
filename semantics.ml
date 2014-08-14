@@ -274,7 +274,7 @@ let evalTuple (x,y,z) g i = (match x with
 						(
 							g.(!i) <- ((scnd v), (thrd e));							
 							i := !i + 1;
-							print_endline ("Performing declaration for: " ^ (scnd v));
+							(*print_endline ("Performing declaration for: " ^ (scnd v));*)
 							Stack.push (DAsn_Op, "DAsn", (thrd e)) tempStack
 							;Stack.push (frst v, scnd v, thrd e) semStack 
 							;Stack.push (DAsn_Op, "DAsn", (thrd e)) semStack (* temporary add!!! *)
@@ -395,6 +395,14 @@ let evalTuple (x,y,z) g i = (match x with
 
 let sa lst g i = 	Stack.clear tempStack;
 					Stack.clear semStack;
+					
+					(* Printing Syntactic Stack *)
+					print_endline "*****************";
+					print_endline "SYNTACTIC STACK";
+					print_endline "*****************";
+					List.iter (fun (fs, sn, thr) -> 				
+						print_endline (" (" ^ sn ^ "," ^ thr ^ ")")) lst; 
+					
 					List.iter (fun (x) -> evalTuple x g i) lst;					
 					(* Stack.push (Stack.pop tempStack) semStack; *) (* temporary removed !!! *)
 					(* ^ removed this because expressions push themselves onto sem stack now. *)

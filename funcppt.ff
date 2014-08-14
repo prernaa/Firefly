@@ -1,0 +1,12 @@
+var = 0
+yvar = 0
+let f() = { 
+	yvar = 1
+}
+
+f()
+/*
+TODO
+1. Function Definition with multiple statements
+2. More statements after the function call
+*/

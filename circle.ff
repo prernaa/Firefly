@@ -1,0 +1,22 @@
+/* DRAW CIRCLE */
+
+v1 = [0.0,-1.0]
+0.25 on [0.0,-1.0]
+
+x = v1.x
+y = v1.y
+
+angle = 0.0
+
+while (angle < 360.0)
+{
+	0.005 on [x,y]
+	
+	x2 = 0.005 * (cos angle)
+	y2 = 0.005 * (sin angle)
+	
+	x = x2
+	y = y2
+		
+	angle = angle + 1.0
+}
