@@ -80,9 +80,13 @@ then
 	then
 		if [ $silent = 1 ] 
 		then
-			start //B //WAIT cppCompile.bat "$filename" >nul 2>nul
+			g++ -o $filename -Wall $filename.cpp -mwindows glut32.lib -lopengl32 -lglu32
+			./$filename.exe
+			# start //B //WAIT cppCompile.bat "$filename" >nul 2>nul
 		else
-			start //B //WAIT cppCompile.bat "$filename"
+			g++ -o $filename -Wall $filename.cpp -mwindows glut32.lib -lopengl32 -lglu32
+			./$filename.exe
+			# start //B //WAIT cppCompile.bat "$filename"
 		fi
 	else
 		:
