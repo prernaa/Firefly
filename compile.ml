@@ -240,6 +240,8 @@ let rec gen_expr = function
 					globals_index := !globals_index + 1; *)
   | Not(e)	->	gen_expr e @ [(Not_Op,"NOT","bool")]
   | Sqrt(e) -> gen_expr e @ [(Sqrt,"SQRT","TypeToInfer")]
+  | Sin(e)	-> gen_expr e @ [(Sin_Op,"SIN","float")]
+  | Cos(e)	-> gen_expr e @ [(Cos_Op,"COS","float")]
   | _ -> []  	
 
 let rec gen_stmt = function

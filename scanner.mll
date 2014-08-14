@@ -36,6 +36,8 @@ rule token = parse
 | "let"		{ LET }
 | "endif"	{ ENDIF }
 | "sqrt"	{ SQRT }
+| "sin"		{ SIN }
+| "cos"		{ COS }
 | eof { EOF }
 | ['a'-'z' 'A'-'Z']+ ['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm {IDENTIFIER(lxm)}
 | _ as char 				{ raise (Failure("illegal character " ^ Char.escaped char)) }

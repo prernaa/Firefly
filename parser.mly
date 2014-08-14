@@ -6,12 +6,13 @@
 %token AND OR NOT
 %token LPAREN RPAREN LBRACE RBRACE
 %token OPENVEC COMMA CLOSEVEC LET
-%token SQRT ASSIGN PLUS MINUS TIMES DIVIDE ON OFF IF ELSE WHILE ENDIF
+%token SQRT SIN COS ASSIGN PLUS MINUS TIMES DIVIDE ON OFF IF ELSE WHILE ENDIF
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
  
 %left LPAREN RPAREN
+%right SIN COS
 %right SQRT
 %right ASSIGN
 %left OR
@@ -83,6 +84,8 @@ expr:
   | MINUS constant	%prec UMINUS		{ NegConstant($2) }
   | LPAREN expr RPAREN 					{ $2 }
   | SQRT expr							{ Sqrt($2) }
+  | SIN expr							{ Sin($2) }
+  | COS expr							{ Cos($2) }
   
 constant:
 	INTEGER								{ Integer($1) }
