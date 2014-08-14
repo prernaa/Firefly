@@ -2,9 +2,8 @@
 
 i = 0
 j = 0.3
-if (3 > 1) && 4 < 5 
-{
-	while !(20 == i)
+if (3 > 1) && 4 < 5
+	while !(20 == i)	
 	{
 		0.05 on [1.0, j]
 		i = i + 1*2/2
@@ -12,13 +11,10 @@ if (3 > 1) && 4 < 5
 			j = j - 0.2
 		else
 			j = j + 0.2
-		endif
+		endif		
 	}
-}
 else
-{
 	1.0 on [-1,-1]
-} 
 endif
 
 let myfun() =
