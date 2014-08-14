@@ -271,9 +271,9 @@ let rec gen_stmt = function
   | Block(stmts)	->	List.concat (List.map gen_stmt stmts)  
   | Call(fn)		-> 	lbl_index := !lbl_index + 10;
 						let li = !lbl_index in
-						[SetReturn(li), "SET RET " ^ fn, "void"]
+						[SetReturn(li+1), "SET RET " ^ fn, "void"]
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
-						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 						
+						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
 
 let rec gen_fdef = function  
 	Fdef(n, b)	-> 	lbl_index := !lbl_index + 10;
