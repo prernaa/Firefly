@@ -28,8 +28,10 @@
 
 %%
 
-program:		
-	stmts fdefs							{ (List.rev $1, List.rev $2) }	
+program:			
+   /* nothing */ { [], [] }
+ | program stmt { ($2 :: fst $1), snd $1 }
+ | program fdef { fst $1, ($2 :: snd $1) }	
 	
 fdefs:
 	/* nothing */    					{ [] }

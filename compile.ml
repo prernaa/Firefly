@@ -257,6 +257,6 @@ let print_gen_fdefs = function
 let translate = function
 	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
 	(stmts, fdefs) 	-> 	initCppFile();
-						List.iter print_gen stmts;  
-						List.iter print_gen_fdefs fdefs;
+						List.iter print_gen (List.rev stmts);  
+						List.iter print_gen_fdefs (List.rev fdefs);
 						closeCppFile()

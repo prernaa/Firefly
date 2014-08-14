@@ -1,3 +1,8 @@
+let f2() =
+{
+	varx = 10
+}
+
 /*var1 = 2
 if 1 > 0 var1 = 100 else var1 = 200
 endif*/
@@ -5,13 +10,27 @@ endif*/
 
 i = 0
 j = 0.3
-while !(20 == i)
+varx = 0
+let f3() =
 {
-	0.05 on [1.0, j]
-	i = i + 1*2/2
-	if i > 10		
-		j = j - 0.2
-	else
-		j = j + 0.2
-	endif
+	varx = 10
+}
+if 2 > 1
+	while !(20 == i)
+	{
+		0.05 on [1.0, j]
+		i = i + 1*2/2
+		if i > 10		
+			j = j - 0.2
+		else
+			j = j + 0.2
+		endif		
+	}
+else
+	varx =  1
+endif
+
+let f1() =
+{
+	varx = 10
 }
