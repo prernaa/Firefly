@@ -6,7 +6,7 @@
 %token AND OR NOT
 %token LPAREN RPAREN LBRACE RBRACE
 %token OPENVEC COMMA CLOSEVEC LET
-%token ASSIGN PLUS MINUS TIMES DIVIDE ON OFF IF ELSE WHILE
+%token ASSIGN PLUS MINUS TIMES DIVIDE ON OFF IF ELSE WHILE ENDIF
 %token EOF
 %token <(float * float)> VEC2
 %token <string> IDENTIFIER
@@ -46,7 +46,7 @@ stmts:
 stmt:
 	expr_stmt							{ Expr($1) }	
   |	LBRACE stmts RBRACE					{ Block(List.rev $2) }
-  | IF expr stmt ELSE stmt    			{ If($2, $3, $5) }
+  | IF expr stmt ELSE stmt ENDIF		{ If($2, $3, $5) }
   | WHILE expr stmt						{ While($2, $3) }  
 
 vec2:
