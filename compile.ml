@@ -29,6 +29,32 @@ using namespace std;
 struct vec2cpp{
 	float x;
 	float y;
+	vec2cpp& operator=(const vec2cpp& other)
+	{
+		x = other.x;
+		y = other.y;
+		return *this;
+	}
+	vec2cpp& operator+(const vec2cpp& other)
+	{
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+	vec2cpp& operator-(const vec2cpp& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
+	bool operator==(const vec2cpp& other)
+	{
+		return (x==other.x && y==other.y);
+	}
+	bool operator!=(const vec2cpp& other)
+	{
+		return !(x==other.x && y==other.y);
+	}
 };
 vec2cpp _ff = {0,0};
 int myprogram();
