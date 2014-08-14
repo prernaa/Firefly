@@ -231,8 +231,8 @@ let rec gen_stmt = function
 						@ [(While_Op(li), "WHILE " ^ string_of_int(li), "bool")] 
 						@ gen_stmt ts 
 						@ [(Goto(li + 1), "GOTO " ^ string_of_int(li + 1), "void")] 
-						@ [(EndWhile_Op, "ENDWHILE", "bool")]
 						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
+						@ [(EndWhile_Op, "ENDWHILE", "bool")]
   | Block(stmts)	->	List.concat (List.map gen_stmt stmts)  
 
 let rec gen_fdef = function  

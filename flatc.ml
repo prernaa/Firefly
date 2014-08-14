@@ -159,8 +159,8 @@ glEnd();
 					Stack.push (varname) stck;
 					()
 	|	If_Op(i)->	let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; } {");												
-	|	EndIf_Op->	fprintf oc "\n\t%s" ("}")						
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; } {{");												
+	|	EndIf_Op->	fprintf oc "\n\t%s" ("}}")						
 	|	Or_Op(i) ->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
     |	And_Op(i) ->let e = Stack.pop stck in 
@@ -177,7 +177,10 @@ glEnd();
 						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }{");												
 	|	EndWhile_Op->	fprintf oc "\n\t%s" ("}")	
 	|	Goto(i)	->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
-	|	Lbl(i)	->	fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":;");
+	|	Lbl(i)	->	if(i mod 2 = 0) then
+						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{;");
+					if(i mod 2 = 1) then
+						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":;");
 	| 	_ 		->	()	
 
 
