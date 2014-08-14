@@ -219,7 +219,8 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{");
 					if(i mod 2 = 1) then
 						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
-	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":");					
+	|  	Endfdef ->  fprintf oc "\n\t%s" ("}")
+	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":{");					
 	| 	_ 		->	()	
 
 
