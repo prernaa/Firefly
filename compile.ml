@@ -275,7 +275,7 @@ let rec gen_stmt = function
 						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 
 						@ [(EndWhile_Op, "ENDWHILE", "bool")]
   | Block(stmts)	->	List.concat (List.map gen_stmt stmts)  
-  | Call(fn)		-> 	lbl_index := !lbl_index + 10;
+  | Call(fn, args)	-> 	lbl_index := !lbl_index + 10;
 						let li = !lbl_index in
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 

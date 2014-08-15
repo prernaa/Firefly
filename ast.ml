@@ -25,7 +25,7 @@ type stmt =
   |	Block of stmt list
   | If of expr * stmt * stmt
   | While of expr * stmt  
-  | Call of string
+  | Call of string * (expr list)
   | Fdef of string * (string list) * stmt
   
 type stmts = 

@@ -45,7 +45,7 @@ stmt:
   |	LBRACE stmts RBRACE					{ Block(List.rev $2) }
   | IF expr stmt ELSE stmt ENDIF		{ If($2, $3, $5) }
   | WHILE expr stmt						{ While($2, $3) }  
-  | IDENTIFIER LPAREN RPAREN			{ Call ($1) }
+  | IDENTIFIER LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
   | LET IDENTIFIER LPAREN formals_opt RPAREN ASSIGN stmt
 										{ Fdef($2, $4, $7) }
 
@@ -56,6 +56,14 @@ formals_opt:
 formal_list:
     IDENTIFIER                   { [$1] }
   /*| formal_list COMMA ID { $3 :: $1 } */
+  
+actuals_opt:
+    /* nothing */ { [] }
+  | actuals_list   { List.rev $1 } 
+
+actuals_list:
+    expr                   { [$1] }
+  /*| formal_list COMMA ID { $3 :: $1 } */  
 										
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }	
