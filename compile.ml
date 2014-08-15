@@ -24,6 +24,7 @@ let initCppFile = function
 #endif
 #include <GL/glut.h>  // GLUT, includes glu.h and gl.h
 #include <math.h>
+#include <stack>
 #ifdef _MSC_VER                         // Check if MS Visual C compiler
 #  pragma comment(lib, \"opengl32.lib\")  // Compiler-specific directive to avoid manually configuration
 #  pragma comment(lib, \"glu32.lib\")     // Link libraries
@@ -60,8 +61,10 @@ struct vec2cpp{
 		return !(x==other.x && y==other.y);
 	}
 };
+struct actRecord{
+	void *retFunc;
+};
 void* returnPath;
-vec2cpp _ff = {0,0};
 int myprogram();
 void DrawAxes()
 {
@@ -127,7 +130,9 @@ int main(int argc, char** argv)
    	glutMainLoop();                 // Enter the infinite event-processing loop
 	return 0;
 }
-int myprogram(){"
+int myprogram(){
+	vec2cpp _ff = {0,0};
+	stack <actRecord> fRecords;\n\n\n"
 										
 		
 let closeCppFile = function
