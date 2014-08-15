@@ -1,22 +1,23 @@
-i = 0
-yvar = 0
+p=0
+top = 2
 let f() = 
 {
-	i = i + 1
-	if i == 2
-	{
-		yvar = 1 
-	} 
-	else 
-	{
-		yvar = -1
-	}	
-	endif	
+	top = top - 1 
+	if(top < 0){
+		0.5 on [1.0,0.0]
+	}
+	else{
+		f()
+	}
+	endif
 }
+f()
+bottom = 1
 
+/*
 f()
 0.5 on [1, yvar]
-
+*/
 
 /*
 if var == 0
