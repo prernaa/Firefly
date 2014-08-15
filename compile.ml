@@ -280,7 +280,7 @@ let rec gen_stmt = function
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
-  |	Fdef(n, b)	-> 	lbl_index := !lbl_index + 10;
+  |	Fdef(n, a, b)	-> 	lbl_index := !lbl_index + 10;
 					let li = !lbl_index in
 					[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
 					@ [(Flbl(n), "FLBL " ^ n, "void")] 

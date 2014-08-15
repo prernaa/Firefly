@@ -46,9 +46,17 @@ stmt:
   | IF expr stmt ELSE stmt ENDIF		{ If($2, $3, $5) }
   | WHILE expr stmt						{ While($2, $3) }  
   | IDENTIFIER LPAREN RPAREN			{ Call ($1) }
-  | LET IDENTIFIER LPAREN RPAREN ASSIGN stmt
-										{ Fdef($2, $6) }
+  | LET IDENTIFIER LPAREN formals_opt RPAREN ASSIGN stmt
+										{ Fdef($2, $4, $7) }
 
+formals_opt:
+    /* nothing */ { [] }
+  | formal_list   { List.rev $1 } 
+
+formal_list:
+    IDENTIFIER                   { [$1] }
+  /*| formal_list COMMA ID { $3 :: $1 } */
+										
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }	
 
