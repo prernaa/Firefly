@@ -52,6 +52,18 @@ struct vec2cpp{
 		y -= other.y;
 		return *this;
 	}
+	vec2cpp& operator*(const vec2cpp& other)
+	{
+		x *= other.x;
+		y *= other.y;
+		return *this;
+	}
+	vec2cpp& operator/(const vec2cpp& other)
+	{
+		x /= other.x;
+		y /= other.y;
+		return *this;
+	}
 	bool operator==(const vec2cpp& other)
 	{
 		return (x==other.x && y==other.y);

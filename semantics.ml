@@ -90,10 +90,17 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								(*Stack.push t2 semStack;*) (* temporary removed!!! *)
-								(*Stack.push t1 semStack;*) (* temporary removed!!! *)
-								Stack.push (x,y,v1) tempStack
-								;Stack.push (x,y,v1) semStack (* temporary add! *)
+								if (not (v1 = "vec2cpp" or v1 = "int" or v1 = "float")) then
+								(
+									raise ( Failure ("Invalid type: " ^ (v1) ^ ": Arithmetic operator must take int, float or vec2"))
+								)
+								else
+								(
+									(*Stack.push t2 semStack;*) (* temporary removed!!! *)
+									(*Stack.push t1 semStack;*) (* temporary removed!!! *)
+									Stack.push (x,y,v1) tempStack
+									;Stack.push (x,y,v1) semStack (* temporary add! *)
+								)
 							)
 						)
 					)
@@ -110,10 +117,17 @@ let evalTuple (x,y,z) g i = (match x with
 							)
 							else
 							(
-								(*Stack.push t2 semStack;*) (* temporary removed!!! *)
-								(*Stack.push t1 semStack;*) (* temporary removed!!! *)
-								Stack.push (x,y,z) tempStack
-								;Stack.push (x,y,z) semStack (* temporary add!! *)
+								if (not (v1 = "int" or v1 = "float")) then
+								(
+									raise ( Failure ("Invalid type: " ^ (v1) ^ ": Relational operator must take int or float."))
+								)
+								else
+								(
+									(*Stack.push t2 semStack;*) (* temporary removed!!! *)
+									(*Stack.push t1 semStack;*) (* temporary removed!!! *)
+									Stack.push (x,y,z) tempStack
+									;Stack.push (x,y,z) semStack (* temporary add!! *)
+								)
 							)
 						)
 					)
