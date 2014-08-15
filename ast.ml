@@ -26,15 +26,16 @@ type stmt =
   | If of expr * stmt * stmt
   | While of expr * stmt  
   | Call of string
+  | Fdef of string * stmt
   
 type stmts = 
 	stmt list
 
-type fdef = 
-    Fdef of string * stmt
+(*type fdef = *)
+    
 
-type fdefs =
-	fdef list
+(*type fdefs =
+	fdef list*)
 	
 type program = 
-	stmts * fdefs
+	stmts

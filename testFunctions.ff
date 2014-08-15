@@ -1,6 +1,18 @@
-var = 0
+i = 0
 yvar = 0
-let f() = { yvar = 1 }
+let f() = 
+{
+	i = i + 1
+	if i == 2
+	{
+		yvar = 1 
+	} 
+	else 
+	{
+		yvar = -1
+	}	
+	endif	
+}
 
 f()
 0.5 on [1, yvar]

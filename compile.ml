@@ -275,9 +275,7 @@ let rec gen_stmt = function
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
-
-let rec gen_fdef = function  
-	Fdef(n, b)	-> 	lbl_index := !lbl_index + 10;
+  |	Fdef(n, b)	-> 	lbl_index := !lbl_index + 10;
 					let li = !lbl_index in
 					[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
 					@ [(Flbl(n), "FLBL " ^ n, "void")] 
@@ -293,18 +291,9 @@ let print_gen x = match x with
 			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
 			print_endline ""
-			(* Array.iter (fun (v, t) -> print_endline (v ^ " ggg " ^ t)) globals *) 
-
-let print_gen_fdefs x = match x with
-	_	->	List.iter (fun (fs, sn, thr) -> 
-				(*print_endline ("DEF (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_fdef x) );*)
-				print_endline ("SEM (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_fdef x) (globals) globals_index);
-			generate_c (sa (gen_fdef x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
-			print_endline ""
 			
 let translate = function
 	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
-	(stmts, fdefs) 	-> 	initCppFile();
-						List.iter print_gen (List.rev stmts);  
-						List.iter print_gen_fdefs (List.rev fdefs);
-						closeCppFile()
+	stmts	-> 	initCppFile();
+				List.iter print_gen (List.rev stmts);  				
+				closeCppFile()

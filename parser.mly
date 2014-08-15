@@ -33,21 +33,12 @@
 %%
 
 program:			
-   /* nothing */ { [], [] }
- | program stmt { ($2 :: fst $1), snd $1 }
- | program fdef { fst $1, ($2 :: snd $1) }	
-	
-fdefs:
-	/* nothing */    					{ [] }
-  |	fdefs fdef 							{ ($2 :: $1) }
-	
-fdef:	
-    LET IDENTIFIER LPAREN RPAREN ASSIGN LBRACE stmt RBRACE
-										{ Fdef($2, $7) }
+   /* nothing */ { [] }
+ | program stmt { ($2 :: $1) }
 	  
 stmts:	  
 	 /* nothing */ 						{ [] }
-	| stmts stmt						{ ($2 :: $1) }	
+	| stmts stmt						{ ($2 :: $1) }		
 
 stmt:
 	expr_stmt							{ Expr($1) }	
@@ -55,6 +46,8 @@ stmt:
   | IF expr stmt ELSE stmt ENDIF		{ If($2, $3, $5) }
   | WHILE expr stmt						{ While($2, $3) }  
   | IDENTIFIER LPAREN RPAREN			{ Call ($1) }
+  | LET IDENTIFIER LPAREN RPAREN ASSIGN stmt
+										{ Fdef($2, $6) }
 
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }	
