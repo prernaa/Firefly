@@ -19,7 +19,7 @@ Usage()
 	echo "-p: Run C++ compiler on generated .cpp file, and then run the executable. (Mac OS X only)"
 	echo "-s: Use with '-c' or '-p' option. This will suppress output from C++ compilation and execution."
 	echo ""
-	echo "This will run the Firefly3D compiler on file.ff, and generate an output cpp file."
+	echo "This will run the Firefly compiler on file.ff, and generate an output cpp file."
 }
 
 DeleteCpp()
@@ -74,9 +74,9 @@ then
 	# Compile the source .ff file.
 	if [ $silent = 1 ]
 	then
-		./firefly3D.byte < $1 > nul
+		./firefly.byte < $1 > nul
 	else
-		./firefly3D.byte < $1
+		./firefly.byte < $1
 	fi
 	mv output.cpp "$filename".cpp
 	
@@ -97,7 +97,6 @@ then
 		:
 	fi
 	
-	# PRERNA : FEEL FREE TO INSERT YOUR OWN C++ COMPILE & RUN SCRIPT/CODE HERE.
 	if [ $compileMac = 1 ]
 	then
 		if [ $silent = 1 ] # Place code here to suppress C++ compilation & execution output. Useful for batch testing.
@@ -126,12 +125,12 @@ then
 	then	
 		: 
 	else 
-		echo "Invalid number of arguments. There should be a single Firefly3D source file supplied."
+		echo "Invalid number of arguments. There should be a single Firefly source file supplied."
 		echo ""
 	fi
 	
 else # User supplied more than one argument. This is never allowed.
-	echo "Invalid number of arguments. There should be a single Firefly3D source file supplied."
+	echo "Invalid number of arguments. There should be a single Firefly source file supplied."
 	echo ""
 fi
 
