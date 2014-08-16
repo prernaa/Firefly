@@ -41,6 +41,8 @@ type element =
 	|	Gety_Op
 	|   Endfdef 
 	| 	SetReturn of int	
+	| 	SetLocal of string
+	| 	GetLocal of int
 	
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -74,7 +76,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v1 <> v2) then
+							if (v1 <> v2) && (v1 <> "pointer") && (v2 <> "pointer") then
 							( 
 								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
 							)
@@ -99,7 +101,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v1 <> v2) then
+							if (v1 <> v2) && (v1 <> "pointer") && (v2 <> "pointer") then
 							( 
 								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
 							)
@@ -260,7 +262,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 						)
 						else (* Assignment of existing var *)
 						(
-							if ((thrd v) <> (thrd e)) then
+							if ((thrd v) <> (thrd e)) && (thrd v <> "pointer") && (thrd e <> "pointer") then
 							(
 								raise ( Failure ("Type mismatch: " ^ (scnd v) ^ " - assigning " ^ (thrd e) ^ " to " ^ (thrd v)))
 							)
@@ -276,7 +278,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v1 <> v2) then
+							if (v1 <> v2) && (v1 <> "pointer") && (v2 <> "pointer") then
 							( 
 								raise ( Failure ("Type mismatch: " ^ (v1) ^ " and " ^ (v2)) ) 
 							)
@@ -362,7 +364,9 @@ let evalTuple (x,y,z) g i f fi = (match x with
 	|	Lbl(i)	->	Stack.push (x, y, z) semStack;
 	|	Flbl(s)	->	Stack.push (x, y, z) semStack;																
 	| 	SetReturn(i)	->	Stack.push (x, y, z) semStack;
-	
+	|	SetLocal(fn)	->	Stack.push (x, y, z) semStack;
+	|	GetLocal(i)		->	Stack.push (x, y, z) tempStack;
+							Stack.push (x, y, z) semStack;
 	|	_ -> ()
 	)
 

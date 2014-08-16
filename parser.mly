@@ -11,6 +11,7 @@
 %token <(float * float)> VEC2
 %token GETX GETY
 %token <string> IDENTIFIER
+%token LOCAL
  
 %left LPAREN RPAREN
 %right SIN COS
@@ -46,23 +47,15 @@ stmt:
   | IF expr stmt ELSE stmt ENDIF		{ If($2, $3, $5) }
   | WHILE expr stmt						{ While($2, $3) }  
   | IDENTIFIER LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
-  | LET IDENTIFIER LPAREN formals_opt RPAREN ASSIGN stmt
+  | LET IDENTIFIER LPAREN INTEGER RPAREN ASSIGN stmt
 										{ Fdef($2, $4, $7) }
-
-formals_opt:
-    /* nothing */ { [] }
-  | formal_list   { List.rev $1 } 
-
-formal_list:
-    IDENTIFIER                   { [$1] }
-  /*| formal_list COMMA ID { $3 :: $1 } */
   
 actuals_opt:
-    /* nothing */ { [] }
-  | actuals_list   { List.rev $1 } 
+    /* nothing */ 						{ [] }
+  | actuals_list   						{ $1 } 
 
 actuals_list:
-    expr                   { [$1] }
+    expr        			{ [$1] }
   | actuals_list COMMA expr { $3 :: $1 } 
 										
 vec2:
@@ -100,6 +93,7 @@ expr:
   | COS expr							{ Cos($2) }
   | expr GETX							{ Getx($1) }
   | expr GETY							{ Gety($1) }
+  | LOCAL INTEGER						{ Local($2) }
   
 constant:
 	INTEGER								{ Integer($1) }

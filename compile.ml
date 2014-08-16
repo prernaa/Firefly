@@ -10,7 +10,7 @@ let globals = Array.make 1024 ("", "")
 
 (*functions management *)
 let fun_index = ref (0)
-let funs = Array.make 1024 ( "", [""] )
+let funs = Array.make 1024 ( "", 0 )
 
 (* temp vars management *)
 let tvar_index = ref (0)
@@ -105,7 +105,8 @@ let rec gen_expr = function
   | Cos(e)	-> gen_expr e @ [(Cos_Op,"COS","float")]
   | Getx(e)	-> gen_expr e @ [(Getx_Op,"GETX","float")]
   | Gety(e)	-> gen_expr e @ [(Gety_Op,"GETY","float")]
-  | _ -> []  	
+  | Local(i)-> [(GetLocal(i), "GET LOC " ^ string_of_int i, "pointer")]
+  | _ -> []  	  
 
 let rec gen_stmt = function
 	Expr e 			-> 	gen_expr e
@@ -133,11 +134,19 @@ let rec gen_stmt = function
   | Call(fn, args)	-> 	lbl_index := !lbl_index + 10;
 						let li = !lbl_index in
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
-						@ (List.concat (List.map gen_expr args))
+						@ 	(
+								List.concat 
+								(
+									List.map 
+									(	
+										fun e -> (gen_expr e) @ [(SetLocal(fn), "SET LOC " ^ fn, "void")]
+									) 	args
+								)
+							)
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
-  |	Fdef(fname, args, body)	
-					-> 	funs.(!fun_index) <- (fname, args);
+  |	Fdef(fname, argcount, body)	
+					-> 	funs.(!fun_index) <- (fname, argcount);
 						fun_index := !fun_index + 1;
 						lbl_index := !lbl_index + 10;
 						let li = !lbl_index in

@@ -125,3 +125,5 @@ int main(int argc, char** argv)
 int myprogram(){
 	vec2cpp _ff = {0,0};
 	stack <actRecord> fRecords;
+	float lclVars[1024];
+	int lv_index = 0;

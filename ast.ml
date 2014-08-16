@@ -19,6 +19,7 @@ type expr =
   | Cos of expr
   | Getx of expr
   | Gety of expr
+  | Local of int
   
 type stmt =
 	Expr of expr
@@ -26,7 +27,7 @@ type stmt =
   | If of expr * stmt * stmt
   | While of expr * stmt  
   | Call of string * (expr list)
-  | Fdef of string * (string list) * stmt
+  | Fdef of string * int * stmt
   
 type stmts = 
 	stmt list
