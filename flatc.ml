@@ -216,8 +216,8 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 					Stack.push (varname) stck;
 					()
 	|	If_Op(i)->	let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; } {{");												
-	|	EndIf_Op->	fprintf oc "\n\t%s" ("}}")							
+						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+	(*|	EndIf_Op->	fprintf oc "\n\t%s" ("}}") *)
 	|	Or_Op(i) ->	let e = Stack.pop stck in 
 						fprintf oc "\n\t%s" ("if (" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
     |	And_Op(i) ->	tvars.(!temp_counter) <- (id_ti, typePrefix);
