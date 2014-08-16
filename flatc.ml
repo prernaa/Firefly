@@ -186,7 +186,7 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 					()
 	|   Off_Op	-> 	tvars.(!temp_counter) <- (id_ti, "float");
 					tvars.(!temp_counter + 1) <- (id_ti_plus1, "vec2cpp");
-					tvars.(!temp_counter + 1) <- (id_ti_plus2, "vec2cpp");
+					tvars.(!temp_counter + 2) <- (id_ti_plus2, "vec2cpp");
 					let dir = Stack.pop stck and dist = Stack.pop stck in 
 					fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));	
 "^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
@@ -234,21 +234,21 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 					    Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					   	temp_counter:=!temp_counter+1;
 	|	While_Op(i)	->	let e = Stack.pop stck in 
-						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }{");												
-	|	EndWhile_Op ->	fprintf oc "\n\t%s" ("}")	
+						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
+	(*|	EndWhile_Op ->	fprintf oc "\n\t%s" ("}")	*)
 	|	Goto(i)		->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
 	|	GotoFun(fn)	->	fprintf oc "\n\t%s" ("goto _L" ^ fn ^ ";");	
 	|	GotoReturn	->	tvars.(!temp_counter) <- (id_ti, "void *");
-						fprintf oc "\n\t%s" ("\nvoid *_t"^string_of_int(!temp_counter)^" = ((fRecords.top()).retFunc);");
+						fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^" = ((fRecords.top()).retFunc);");
 						fprintf oc "\n\t%s" ("fRecords.pop();\n");
 						fprintf oc "\n\t%s" ("goto *_t"^string_of_int(!temp_counter)^";\n");
 						temp_counter:=!temp_counter+1;
 	|	Lbl(i)	->	if(i mod 2 = 0) then
-						fprintf oc "\n\t%s" ("}_L"^string_of_int(i) ^ ":{");
+						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
 					if(i mod 2 = 1) then
 						fprintf oc "\n\t%s" ("_L"^string_of_int(i) ^ ":");
-	|  	Endfdef ->  fprintf oc "\n\t%s" ("}")
-	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":{");					
+	(*|  	Endfdef ->  fprintf oc "\n\t%s" ("}")*)
+	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":");					
 	|   SetReturn(i)	->	tvars.(!temp_counter) <- (id_ti, "actRecord");
 							fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^";\n _t"^string_of_int(!temp_counter)^".retFunc = &&_L"^string_of_int i ^";\n fRecords.push(_t"^string_of_int(!temp_counter)^");");
 							temp_counter := !temp_counter + 1;
