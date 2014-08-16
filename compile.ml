@@ -4,20 +4,40 @@ open Semantics
 open Flatc
 open Stack
 
+(*global vars management *)
 let globals_index = ref (0)
-let globals = Array.make 1024 ("","")
+let globals = Array.make 1024 ("", "")
+
+(* temp vars management *)
 let tvar_index = ref (0)
+let tempvars = Array.make 1024 ("", "")
 
 (* Label managment *)
 let lbl_index = ref (0)
 let lblStack = Stack.create ()
 let a = Stack.push !lbl_index lblStack
 
+(* CPP output files *)
 let file = "output.cpp"
-let oc = open_out file
+let oc_init = open_out file
+let file_decs = "output_decs.cpp"
+let oc_decs = open_out file_decs
+let file_TAC = "output_TAC.cpp"
+let oc_TAC = open_out file_TAC
+
+let read_file file =
+  let ic = open_in file in
+  let lines = ref [] in
+  try
+    while true do
+      let line = input_line ic in
+      lines := line :: !lines
+    done; assert false
+  with End_of_file ->
+    String.concat "\n" (List.rev !lines)
 
 let initCppFile = function 
-	_ ->	fprintf oc "%s\n\n\t" "\n\n
+	_ ->	fprintf oc_init "%s\n\n\t" "\n\n
 #include <iostream>
 #ifdef _WIN32
     #include <windows.h>
@@ -145,63 +165,13 @@ int main(int argc, char** argv)
 int myprogram(){
 	vec2cpp _ff = {0,0};
 	stack <actRecord> fRecords;\n\n\n"
-										
-		
+											
 let closeCppFile = function
 	_ ->	
-			fprintf oc "%s\n\n" "\n\n
+			fprintf oc_TAC "%s\n\n" "\n\n
 	return 0;
 }";
-			close_out oc
-(*let firefly = ref (0.0,0.0);;
-
-
-let tuple_of_vec = function
-	Vec2(x,y)	->	(x,y)
-let norm_tuple_of_vec = function
-	Vec2(x,y) ->	let mag = sqrt ((x *. x) +. (y *. y)) in
-						(x /. mag, y/. mag)  
-*)
-
-(*	
-let rec eval_expr = function 
-	  Constant(x) ->
-		(match x with
-		  Integer(x) -> string_of_int x
-		| Float(x)	-> 	string_of_float x)
-	| NegConstant(x) ->
-		(match x with
-		  Integer(x) -> string_of_int (-x)
-		| Float(x) -> string_of_float (-.x))
-*)	
-	
-(*			
-let rec output_expr exp = match exp with
-	  Constant(x) -> let v = eval_expr exp in
-						fprintf oc "%s" v
-	| NegConstant(x) -> let v = eval_expr exp in
-						fprintf oc "%s" v
-	| Vec2(x,y)	->	fprintf oc "%s" ("{"^ string_of_float (x+.0.0) ^"," ^ string_of_float (y+.0.0) ^ "}")
-	| Identifier(x) -> fprintf oc "%s" (x);
-	| Assign(v,e)	-> fprintf oc "%s" ((type_to_string e) ^" "^v^" = "); output_expr e; fprintf oc "%s" (";\n\t")
-	| Binop(e1, op, e2) ->
-			(match op with
-			  On -> let onDist = float_of_string(eval_expr e1) and onDir = norm_tuple_of_vec e2 in 
-			  			let newFirefly = (onDist*.(fst onDir)+.(fst !firefly), onDist*.(snd onDir)+.(snd !firefly)) in 
-						fprintf oc "\n\t%s" ("glBegin(GL_LINES);\n\tglColor3f(0.0, 0.0, 0.0);");
-						fprintf oc "\n\t%s" ("\tglVertex2f("^string_of_float (fst !firefly) ^"f, "^string_of_float (snd !firefly)^"f);\n\t\tglVertex2f("^string_of_float (fst newFirefly) ^"f, "^string_of_float (snd newFirefly)^"f);");
-						fprintf oc "\n\t%s" ("glEnd();");
-						firefly := newFirefly
-						(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst newFirefly) ^","^string_of_float (snd newFirefly) ^ "\";")
-						*)
-			  			(*fprintf oc "\t%s\n\n" ("cout<<\"ON is working!"^ string_of_float (fst onDir) ^","^string_of_float (snd onDir) ^" DIST:"^string_of_float onDist ^ "\";")
-						*)
-			| Off -> let offDist = float_of_string(eval_expr e1) and offDir = norm_tuple_of_vec e2 in 
-			  			let newFirefly = (offDist*.(fst offDir)+.(fst !firefly), offDist*.(snd offDir)+.(snd !firefly)) in 
-						firefly := newFirefly
-			
-			)
-*)		
+			close_out oc_TAC
 
 let type_to_string = function
 	  Constant(x) ->
@@ -305,12 +275,28 @@ let print_gen x = match x with
 	_ -> 	(*List.iter (fun (fs, sn, thr) -> *)
 				(*print_endline ("SYN (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
 				(*print_endline ("SEM (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
-			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc) (globals) (!globals_index);
+			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc_TAC) (globals) (!globals_index) (tempvars);
 			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
-			print_endline ""
-			
+			print_endline ""		
+
+(* helper function to print array values as c++ variable declarations *)			
+let rec array_to_file g c i fl = 	
+	(
+		if i < c then (		
+			let varname s = String.sub (s) (3) ((String.length s) -4) in 
+				fprintf fl "\n\t%s" ((snd g.(i)) ^ " " ^ (varname (fst g.(i))) ^ ";");		
+			array_to_file g c (i+1) fl
+		)	
+		else ()
+	)
+				
 let translate = function
 	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
 	stmts	-> 	initCppFile();
 				List.iter print_gen (List.rev stmts);  				
-				closeCppFile()
+				closeCppFile();
+				array_to_file globals !globals_index 0 oc_decs;
+				array_to_file tempvars (!temp_counter) 0 oc_decs;
+				close_out oc_decs;											
+				fprintf oc_init "\n\t%s" ( (read_file file_decs) ^ "\n" ^ (read_file file_TAC) );																	
+				close_out oc_init
