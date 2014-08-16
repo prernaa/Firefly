@@ -65,7 +65,7 @@ let checkUndeclaredVar v =
 )
 	
 (* perform semantic analysis on each syntax element *)
-let evalTuple (x,y,z) g i = (match x with
+let evalTuple (x,y,z) g i f fi = (match x with
 		Int(v) ->  Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
 	| 	Flt(v) -> Stack.push (x,y,z) (tempStack);Stack.push (x,y,z) (semStack)
 	|	Add_Op	| Minus_Op | Multiply_Op | Divide_Op -> 
@@ -348,7 +348,16 @@ let evalTuple (x,y,z) g i = (match x with
 	|	Endfdef	->	Stack.push (x,y,z) semStack;
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
 	|	Goto(s)	->	Stack.push (x, y, z) semStack;
-	|	GotoFun(fn) -> Stack.push (x, y, z) semStack;
+	|	GotoFun(fn) ->	(* Make sure function has been defined *)
+						if List.exists (fun s -> (fst s) = fn) (Array.to_list f) then 
+						(
+							let m = List.find (fun s -> (fst s) = fn) (Array.to_list f) in
+							Stack.push (x, y, "void") semStack
+						)
+						else
+						(
+							raise ( Failure ("Calling undefined function: " ^ fn))
+						)
 	|	GotoReturn	->	Stack.push (x, y, z) semStack;																
 	|	Lbl(i)	->	Stack.push (x, y, z) semStack;
 	|	Flbl(s)	->	Stack.push (x, y, z) semStack;																
@@ -356,24 +365,24 @@ let evalTuple (x,y,z) g i = (match x with
 	|	_ -> ()
 	)
 
-let sa lst g i = 	Stack.clear tempStack;
-					Stack.clear semStack;
-					
-					(* Printing Syntactic Stack *)
-					print_endline "*****************";
-					print_endline "SYNTACTIC STACK";
-					print_endline "*****************";
-					List.iter (fun (fs, sn, thr) -> 				
-						print_endline (" (" ^ sn ^ "," ^ thr ^ ")")) lst; 					
-					List.iter (fun (x) -> evalTuple x g i) lst;										
-					
-					(* Convert SAST stack to SAST list *)
-					let rec buildSemList (l) = 
-						if Stack.is_empty semStack then
-							l
-						else
-						(
-							buildSemList ((Stack.pop semStack) ::  l)
-						)
-					in
-					buildSemList []
+let sa lst g i f fi = 	Stack.clear tempStack;
+						Stack.clear semStack;
+						
+						(* Printing Syntactic Stack *)
+						print_endline "*****************";
+						print_endline "SYNTACTIC STACK";
+						print_endline "*****************";
+						List.iter (fun (fs, sn, thr) -> 				
+							print_endline (" (" ^ sn ^ "," ^ thr ^ ")")) lst; 					
+						List.iter (fun (x) -> evalTuple x g i f fi) lst;										
+						
+						(* Convert SAST stack to SAST list *)
+						let rec buildSemList (l) = 
+							if Stack.is_empty semStack then
+								l
+							else
+							(
+								buildSemList ((Stack.pop semStack) ::  l)
+							)
+						in
+						buildSemList []

@@ -10,7 +10,7 @@ let globals = Array.make 1024 ("", "")
 
 (*functions management *)
 let fun_index = ref (0)
-let funs = Array.make 1024 ( "", "", [""], Expr(Constant(Integer(0))) )
+let funs = Array.make 1024 ( "", [""] )
 
 (* temp vars management *)
 let tvar_index = ref (0)
@@ -135,11 +135,14 @@ let rec gen_stmt = function
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
-  |	Fdef(n, a, b)	-> 	lbl_index := !lbl_index + 10;
+  |	Fdef(fname, args, body)	
+					-> 	funs.(!fun_index) <- (fname, args);
+						fun_index := !fun_index + 1;
+						lbl_index := !lbl_index + 10;
 						let li = !lbl_index in
 						[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
-						@ [(Flbl(n), "FLBL " ^ n, "void")] 
-						@ (gen_stmt b)
+						@ [(Flbl(fname), "FLBL " ^ fname, "void")] 
+						@ (gen_stmt body)
 						@ [(GotoReturn, "GOTO RET ", "void")] 
 						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 					
 						@ [(Endfdef, "ENDFDEF " ^ string_of_int(li), "bool")] 
@@ -158,15 +161,12 @@ let rec array_to_file g c i fl =
 (* for each statement, this function runs semantic analysis and generates flat C (TAC-like) code *)
 let print_gen x = match x with			
 	_ 	->	let syntaxtree = gen_stmt x (* build AST *)
-			in let sast = sa syntaxtree globals globals_index (* build SAST via semantics.ml *)
-			in	generate_c sast tvar_index lbl_index oc_TAC globals !globals_index tempvars; (* build flat C++ via flatc.ml *)
-	
+			in let sast = sa syntaxtree globals globals_index funs fun_index (* build SAST via semantics.ml *)
+			in	generate_c sast tvar_index lbl_index oc_TAC globals !globals_index tempvars; (* build flat C++ via flatc.ml *)	
 			print_endline ""		
 			
-let translate = function
-	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
-	stmts	-> 	(*initCppFile();*)
-				fprintf oc_init "\n\t%s" (read_file file_head);																	
+let translate = function	
+	stmts	-> 	fprintf oc_init "\n\t%s" (read_file file_head);																	
 				List.iter print_gen (List.rev stmts);  				
 				closeCppFile();
 				array_to_file globals !globals_index 0 oc_decs;
