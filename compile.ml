@@ -8,6 +8,10 @@ open Stack
 let globals_index = ref (0)
 let globals = Array.make 1024 ("", "")
 
+(*functions management *)
+let fun_index = ref (0)
+let funs = Array.make 1024 ( "", "", [""], Expr(Constant(Integer(0))) )
+
 (* temp vars management *)
 let tvar_index = ref (0)
 let tempvars = Array.make 1024 ("", "")
@@ -94,9 +98,7 @@ let rec gen_expr = function
 						@ [(AndDone_Op,"ANDDONE","bool")]
 		)
   | Identifier(x) -> [(Id(x),"ID(" ^ x ^ ")","TypeToInfer")]
-  | Assign(v,e) -> 	gen_expr e @ gen_expr (Identifier(v)) @ [(Asn_Op,"Asn","TypeToInfer")]
-					(* globals.(!globals_index) <- (v, "Type"); 
-					globals_index := !globals_index + 1; *)
+  | Assign(v,e) -> 	gen_expr e @ gen_expr (Identifier(v)) @ [(Asn_Op,"Asn","TypeToInfer")]					
   | Not(e)	->	gen_expr e @ [(Not_Op,"NOT","bool")]
   | Sqrt(e) -> gen_expr e @ [(Sqrt,"SQRT","TypeToInfer")]
   | Sin(e)	-> gen_expr e @ [(Sin_Op,"SIN","float")]
@@ -134,22 +136,14 @@ let rec gen_stmt = function
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
   |	Fdef(n, a, b)	-> 	lbl_index := !lbl_index + 10;
-					let li = !lbl_index in
-					[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
-					@ [(Flbl(n), "FLBL " ^ n, "void")] 
-					@ (gen_stmt b)
-					@ [(GotoReturn, "GOTO RET ", "void")] 
-					@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 					
-					@ [(Endfdef, "ENDFDEF " ^ string_of_int(li), "bool")] 
+						let li = !lbl_index in
+						[(Goto(li), "GOTO " ^ string_of_int(li), "void")] 
+						@ [(Flbl(n), "FLBL " ^ n, "void")] 
+						@ (gen_stmt b)
+						@ [(GotoReturn, "GOTO RET ", "void")] 
+						@ [(Lbl(li), "LBL " ^ string_of_int(li), "void")] 					
+						@ [(Endfdef, "ENDFDEF " ^ string_of_int(li), "bool")] 
   
-let print_gen x = match x with
-	_ -> 	(*List.iter (fun (fs, sn, thr) -> *)
-				(*print_endline ("SYN (" ^ sn ^ "," ^ thr ^ ")")) ( (gen_stmt x) );*)
-				(*print_endline ("SEM (" ^ sn ^ "," ^ thr ^ ")")) (sa (gen_stmt x) (globals) globals_index);*)
-			generate_c (sa (gen_stmt x) (globals) globals_index) (tvar_index) (lbl_index) (oc_TAC) (globals) (!globals_index) (tempvars);
-			(*let _ = generate_c (sa (gen_stmt x) (globals) globals_index) tvar_index lbl_index in ();*)
-			print_endline ""		
-
 (* helper function to print array values as c++ variable declarations *)			
 let rec array_to_file g c i fl = 	
 	(
@@ -160,7 +154,15 @@ let rec array_to_file g c i fl =
 		)	
 		else ()
 	)
-				
+	
+(* for each statement, this function runs semantic analysis and generates flat C (TAC-like) code *)
+let print_gen x = match x with			
+	_ 	->	let syntaxtree = gen_stmt x (* build AST *)
+			in let sast = sa syntaxtree globals globals_index (* build SAST via semantics.ml *)
+			in	generate_c sast tvar_index lbl_index oc_TAC globals !globals_index tempvars; (* build flat C++ via flatc.ml *)
+	
+			print_endline ""		
+			
 let translate = function
 	(*exprs -> initCppFile(); List.iter output_expr exprs;  closeCppFile() *)
 	stmts	-> 	(*initCppFile();*)
