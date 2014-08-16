@@ -40,7 +40,7 @@ type element =
 	|	Getx_Op
 	|	Gety_Op
 	|   Endfdef 
-	| 	SetReturn of int
+	| 	SetReturn of int	
 	
 let tempStack = Stack.create ()
 let a = Stack.push (Int(1),"one","int") tempStack
@@ -362,6 +362,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 	|	Lbl(i)	->	Stack.push (x, y, z) semStack;
 	|	Flbl(s)	->	Stack.push (x, y, z) semStack;																
 	| 	SetReturn(i)	->	Stack.push (x, y, z) semStack;
+	
 	|	_ -> ()
 	)
 

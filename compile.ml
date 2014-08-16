@@ -133,6 +133,7 @@ let rec gen_stmt = function
   | Call(fn, args)	-> 	lbl_index := !lbl_index + 10;
 						let li = !lbl_index in
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
+						@ (List.concat (List.map gen_expr args))
 						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
   |	Fdef(fname, args, body)	

@@ -63,7 +63,7 @@ actuals_opt:
 
 actuals_list:
     expr                   { [$1] }
-  /*| formal_list COMMA ID { $3 :: $1 } */  
+  | actuals_list COMMA expr { $3 :: $1 } 
 										
 vec2:
 	OPENVEC expr COMMA expr CLOSEVEC	{ Vec2($2,$4) }	
