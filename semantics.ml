@@ -82,7 +82,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 							)
 							else
 							(
-								if (not (v1 = "vec2cpp" or v1 = "int" or v1 = "float")) then
+								if (not (v1 = "vec2cpp" or v1 = "int" or v1 = "float" or v1 = "pointer")) then
 								(
 									raise ( Failure ("Invalid type: " ^ (v1) ^ ": Arithmetic operator must take int, float or vec2"))
 								)
@@ -294,7 +294,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v2 <> "float") then
+							if (v2 <> "float") && (v2 <> "pointer") then
 							(
 								raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of ON must be float"))
 							);
@@ -312,7 +312,7 @@ let evalTuple (x,y,z) g i f fi = (match x with
 					(
 						let v1 = (thrd t1) and v2 = (thrd t2) in
 						(
-							if (v2 <> "float") then
+							if (v2 <> "float") && (v2 <> "pointer") then
 							(
 								raise ( Failure ("Invalid type: " ^ v2 ^ "; left-hand operand of OFF must be float"))
 							);

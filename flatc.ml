@@ -259,7 +259,8 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 	(*|  	Endfdef ->  fprintf oc "\n\t%s" ("}")*)
 	|	Flbl(s)	->	fprintf oc "\n\t%s" ("_L" ^ s ^ ":");					
 	|   SetReturn(i)	->	tvars.(!temp_counter) <- (id_ti, "actRecord");
-							fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^";\n\t_t"^string_of_int(!temp_counter)^".retFunc = &&_L"^string_of_int i ^";\n\t fRecords.push(_t"^string_of_int(!temp_counter)^");");
+							fprintf oc "\n\t%s" (ti ^ ".retFunc = &&_L" ^ string_of_int i ^";");
+							fprintf oc "\n\t%s" ("fRecords.push(" ^ ti ^ ");");
 							temp_counter := !temp_counter + 1;
 	|	SetLocal(fn)	->	fprintf oc "\n\t%s" ("lclVars[lv_index] = (float)_t" ^ string_of_int(!temp_counter - 1) ^ ";");		
 							fprintf oc "\n\t%s" ("lv_index = lv_index + 1;");

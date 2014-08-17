@@ -105,7 +105,7 @@ let rec gen_expr = function
   | Cos(e)	-> gen_expr e @ [(Cos_Op,"COS","float")]
   | Getx(e)	-> gen_expr e @ [(Getx_Op,"GETX","float")]
   | Gety(e)	-> gen_expr e @ [(Gety_Op,"GETY","float")]
-  | Local(i)-> [(GetLocal(i), "GET LOC " ^ string_of_int i, "pointer")]
+  | Local(i)-> [(GetLocal(i), "GET LOC " ^ string_of_int i, "float")]
   | _ -> []  	  
 
 let rec gen_stmt = function
