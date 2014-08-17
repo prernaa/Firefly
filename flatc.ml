@@ -158,7 +158,8 @@ let c_statement (x, y, z) ti li oc tvars = let tempType = getTempType(!temp_coun
 					   	()
 	|	Vec2_Op	-> 	tvars.(!temp_counter) <- (id_ti, typePrefix);
 					let op1 = Stack.pop stck and op2 = Stack.pop stck in
-					fprintf oc "\n\t%s" ("_t"^ string_of_int(!temp_counter)^ " = {"^op2^" , "^op1^"};");
+					fprintf oc "\n\t%s" ("_t"^ string_of_int(!temp_counter)^ ".x = "^op2^";");
+					fprintf oc "\n\t%s" ("_t"^ string_of_int(!temp_counter)^ ".y = "^op1^";");
 					Stack.push ("_t"^string_of_int(!temp_counter)) stck;
 					temp_counter:=!temp_counter+1;
 					()
@@ -169,7 +170,8 @@ let c_statement (x, y, z) ti li oc tvars = let tempType = getTempType(!temp_coun
 					fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));	
 "^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
 "^dir^".y = "^dir^".y/_t"^string_of_int(!temp_counter)^";
-_t"^string_of_int(!temp_counter+1)^" = {"^dist^" * "^dir^".x + _ff.x , "^dist^" * "^dir^".y + _ff.y };
+_t"^string_of_int(!temp_counter+1)^".x = "^dist^" * "^dir^".x + _ff.x;
+_t"^string_of_int(!temp_counter+1)^".y = "^dist^" * "^dir^".y + _ff.y;
 glBegin(GL_LINES);
 \tglColor3f(0.0, 0.0, 0.0);
 \tglVertex2f(_ff.x, _ff.y);
@@ -191,7 +193,8 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 					fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^" = sqrt(("^dir^".x * "^dir^".x + "^dir^".y * "^dir^".y));	
 "^dir^".x = "^dir^".x/_t"^string_of_int(!temp_counter)^";
 "^dir^".y = "^dir^".y/_t"^string_of_int(!temp_counter)^";
-_t"^string_of_int(!temp_counter+1)^" = {"^dist^" * "^dir^".x + _ff.x , "^dist^" * "^dir^".y + _ff.y };
+_t"^string_of_int(!temp_counter+1)^".x = "^dist^" * "^dir^".x + _ff.x;
+_t"^string_of_int(!temp_counter+1)^".y = "^dist^" * "^dir^".y + _ff.y;
 _ff.x = _t"^string_of_int(!temp_counter+1)^".x;
 _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 ");
