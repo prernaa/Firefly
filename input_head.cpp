@@ -127,4 +127,5 @@ int myprogram(){
 	stack <actRecord> fRecords;
 	float lclVars[1024];
 	int lv_index = 0;
-	int lv_frameptr = 0;
+	stack <int> lv_frameptr;
+	stack <int> lv_lastframeptr;
