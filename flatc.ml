@@ -237,7 +237,9 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 						fprintf oc "\n\t%s" ("if (!" ^ e ^ ") { goto _L" ^ string_of_int(i) ^ "; }");												
 	(*|	EndWhile_Op ->	fprintf oc "\n\t%s" ("}")	*)
 	|	Goto(i)		->	fprintf oc "\n\t%s" ("goto _L" ^ string_of_int(i)^";");																
-	|	GotoFun(fn)	->	fprintf oc "\n\t%s" ("goto _L" ^ fn ^ ";");	
+	|	GotoFun(fn, argcount)	->	
+						fprintf oc "\n\t%s" ("lv_frameptr = lv_index;");	
+						fprintf oc "\n\t%s" ("goto _L" ^ fn ^ ";");	
 	|	GotoReturn	->	tvars.(!temp_counter) <- (id_ti, "void *");
 						fprintf oc "\n\t%s" ("_t"^string_of_int(!temp_counter)^" = ((fRecords.top()).retFunc);");
 						fprintf oc "\n\t%s" ("fRecords.pop();\n");
@@ -255,7 +257,7 @@ _ff.y = _t"^string_of_int(!temp_counter+1)^".y;
 	|	SetLocal(fn)	->	fprintf oc "\n\t%s" ("lclVars[lv_index] = (float)_t" ^ string_of_int(!temp_counter - 1) ^ ";");		
 							fprintf oc "\n\t%s" ("lv_index = lv_index + 1;");
 	| 	GetLocal(i)		->	tvars.(!temp_counter) <- (id_ti, "float");
-							fprintf oc "\n\t%s" (ti ^ " = lclVars[lv_index - " ^ string_of_int i ^ "];");
+							fprintf oc "\n\t%s" (ti ^ " = lclVars[lv_frameptr - " ^ string_of_int i ^ "];");
 							Stack.push ti stck;
 							temp_counter := !temp_counter + 1;
 	| 	_ 		->	()	

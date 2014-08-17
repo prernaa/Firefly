@@ -28,7 +28,7 @@ type element =
 	|	If_Op of int
 	|	EndIf_Op	
 	| 	Goto of int
-	| 	GotoFun of string
+	| 	GotoFun of string * int
 	|	GotoReturn
 	|	Lbl of int
 	|	Flbl of string
@@ -350,11 +350,14 @@ let evalTuple (x,y,z) g i f fi = (match x with
 	|	Endfdef	->	Stack.push (x,y,z) semStack;
 	|	Goto(i)	->	Stack.push (x, y, z) semStack;																
 	|	Goto(s)	->	Stack.push (x, y, z) semStack;
-	|	GotoFun(fn) ->	(* Make sure function has been defined *)
+	|	GotoFun(fn, argcount) ->	(* Make sure function has been defined *)
 						if List.exists (fun s -> (fst s) = fn) (Array.to_list f) then 
 						(
 							let m = List.find (fun s -> (fst s) = fn) (Array.to_list f) in
-							Stack.push (x, y, "void") semStack
+							(* Make sure function called with right number of arguments *)
+							if snd m <> argcount then 
+								raise ( Failure ("Invalid number of arguments for " ^ fn) )
+							else Stack.push (x, y, "void") semStack
 						)
 						else
 						(

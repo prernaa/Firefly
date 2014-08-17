@@ -132,6 +132,7 @@ let rec gen_stmt = function
 						@ [(EndWhile_Op, "ENDWHILE", "bool")]
   | Block(stmts)	->	List.concat (List.map gen_stmt stmts)  
   | Call(fn, args)	-> 	lbl_index := !lbl_index + 10;
+						let argcount = List.length args in
 						let li = !lbl_index in
 						[SetReturn(li+1), "SET RET " ^ fn, "void"]
 						@ 	(
@@ -143,7 +144,7 @@ let rec gen_stmt = function
 									) 	args
 								)
 							)
-						@ [(GotoFun(fn), "GOTO FUN " ^ fn, "void")] 
+						@ [(GotoFun(fn, argcount), "GOTO FUN " ^ fn, "void")] 
 						@ [(Lbl(li+1), "LBL " ^ string_of_int(li+1), "void")] 						
   |	Fdef(fname, argcount, body)	
 					-> 	funs.(!fun_index) <- (fname, argcount);
