@@ -1,172 +1,228 @@
 
-
-
-#include <iostream>
-#ifdef _WIN32
-    #include <windows.h>
-#endif
-#include <GL/glut.h>  // GLUT, includes glu.h and gl.h
-#include <math.h>
-#ifdef _MSC_VER                         // Check if MS Visual C compiler
-#  pragma comment(lib, "opengl32.lib")  // Compiler-specific directive to avoid manually configuration
-#  pragma comment(lib, "glu32.lib")     // Link libraries
-#endif	
-	
-using namespace std;
-struct vec2cpp{
-	float x;
-	float y;
-	vec2cpp& operator=(const vec2cpp& other)
-	{
-		x = other.x;
-		y = other.y;
-		return *this;
-	}
-	vec2cpp& operator+(const vec2cpp& other)
-	{
-		x += other.x;
-		y += other.y;
-		return *this;
-	}
-	vec2cpp& operator-(const vec2cpp& other)
-	{
-		x -= other.x;
-		y -= other.y;
-		return *this;
-	}
-	bool operator==(const vec2cpp& other)
-	{
-		return (x==other.x && y==other.y);
-	}
-	bool operator!=(const vec2cpp& other)
-	{
-		return !(x==other.x && y==other.y);
-	}
-};
-vec2cpp _ff = {0,0};
-int myprogram();
-void DrawAxes()
-{
-	glBegin(GL_LINES);
-		glColor3f(1.0, 0.0, 0.0);
-		glVertex2f(-1.0f, 0.0f);
-		glVertex2f(+1.0f, 0.0f);
-		glColor3f(0.0, 0.0, 1.0);
-		glVertex2f(0.0f, -1.0f);
-		glVertex2f(0.0f, +1.0f);
-	glEnd();
-}
-void display() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
-   	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
-
-	// Render a color-cube consisting of 6 quads with different colors
-   	glLoadIdentity();                 // Reset the model-view matrix
-
-   	DrawAxes();
-	myprogram();
-
-  	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
-}
-void init() {
-	glClearColor(1.0, 1.0, 1.0, 1.0);
-	glColor3f(0.0, 0.0, 0.0);
-   	glClearDepth(1.0f);                   // Set background depth to farthest
-   	glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
-   	glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
-   	glShadeModel(GL_SMOOTH);   // Enable smooth shading
-   	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
-}
-void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
-// Compute aspect ratio of the new window
-   if (height == 0) height = 1;                // To prevent divide by 0
-   GLfloat aspect = (GLfloat)width / (GLfloat)height;
- 
-   // Set the viewport to cover the new window
-   glViewport(0, 0, width, height);
- 
-   // Set the aspect ratio of the clipping area to match the viewport
-   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
-   glLoadIdentity();
-   if (width >= height) {
-     // aspect >= 1, set the height from -1 to 1, with larger width
-      gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
-   } else {
-      // aspect < 1, set the width to -1 to 1, with larger height
-     gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
-   }
-}
-int main(int argc, char** argv)
-{
-	glutInit(&argc, argv);          // Initialize GLUT
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);	// Enable double buffering
-   	glutInitWindowSize(640, 480);   // Set the window's initial width & height - non-square
-   	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
-   	glutCreateWindow("Model Transform");  // Create window with the given title
-   	glutDisplayFunc(display);       // Register callback handler for window re-paint event
-   	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
-   	init();                       // Our own OpenGL initialization
-   	glutMainLoop();                 // Enter the infinite event-processing loop
-	return 0;
-}
-int myprogram(){
-
+	#include <iostream>
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+#include <GL/glut.h>  // GLUT, includes glu.h and gl.h
+#include <math.h>
+#include <stack>
+#ifdef _MSC_VER                         // Check if MS Visual C compiler
+#  pragma comment(lib, "opengl32.lib")  // Compiler-specific directive to avoid manually configuration
+#  pragma comment(lib, "glu32.lib")     // Link libraries
+#endif	
 	
-	int _t0 = 1;
-	int _t1 = 0;
-	vec2cpp _t2 = {_t0 , _t1};
-	vec2cpp v1 = _t2;
-	float _t3 = v1.x;
-	float x = _t3;
-	float _t4 = v1.y;
-	float y = _t4;
-	int _t5 = 4;
-	int i = _t5;
-	_L21:
-	int _t6 = 0;
-	bool _t7 = i > _t6;
-	if (!_t7) { goto _L20; }{
-	float _t8 = 0.5;
-	vec2cpp _t9 = {x , y};
-	float _t10 = sqrt((_t9.x * _t9.x + _t9.y * _t9.y));	
-_t9.x = _t9.x/_t10;
-_t9.y = _t9.y/_t10;
-vec2cpp _t11 = {_t8 * _t9.x + _ff.x , _t8 * _t9.y + _ff.y };
-glBegin(GL_LINES);
-	glColor3f(0.0, 0.0, 0.0);
-	glVertex2f(_ff.x, _ff.y);
-	glVertex2f(_t11.x , _t11.y);
-glEnd();
-_ff.x = _t11.x;
-_ff.y = _t11.y;
+using namespace std;
+struct vec2cpp{
+	float x;
+	float y;
+	vec2cpp& operator=(const vec2cpp& other)
+	{
+		x = other.x;
+		y = other.y;
+		return *this;
+	}
+	vec2cpp& operator+(const vec2cpp& other)
+	{
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+	vec2cpp& operator-(const vec2cpp& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		return *this;
+	}
+	vec2cpp& operator*(const vec2cpp& other)
+	{
+		x *= other.x;
+		y *= other.y;
+		return *this;
+	}
+	vec2cpp& operator/(const vec2cpp& other)
+	{
+		x /= other.x;
+		y /= other.y;
+		return *this;
+	}
+	bool operator==(const vec2cpp& other)
+	{
+		return (x==other.x && y==other.y);
+	}
+	bool operator!=(const vec2cpp& other)
+	{
+		return !(x==other.x && y==other.y);
+	}
+};
+struct actRecord{
+	void *retFunc;
+};
+void* returnPath;
+int myprogram();
+void DrawAxes()
+{
+	glBegin(GL_LINES);
+		glColor3f(1.0, 0.0, 0.0);
+		glVertex2f(-1.0f, 0.0f);
+		glVertex2f(+1.0f, 0.0f);
+		glColor3f(0.0, 0.0, 1.0);
+		glVertex2f(0.0f, -1.0f);
+		glVertex2f(0.0f, +1.0f);
+	glEnd();
+}
+void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+   	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
-	vec2cpp _t12 = _ff;
-	int _t13 = 90;
-	float _t14 = cos(M_PI / 180 * _t13);
-	float _t15 = _t14 * x;
-	int _t16 = 90;
-	float _t17 = sin(M_PI / 180 * _t16);
-	float _t18 = _t17 * y;
-	float _t19 = _t15 - _t18;
-	float x2 = _t19;
-	int _t20 = 90;
-	float _t21 = sin(M_PI / 180 * _t20);
-	float _t22 = _t21 * x;
-	int _t23 = 90;
-	float _t24 = cos(M_PI / 180 * _t23);
-	float _t25 = _t24 * y;
-	float _t26 = _t22 + _t25;
-	float y2 = _t26;
+	// Render a color-cube consisting of 6 quads with different colors
+   	glLoadIdentity();                 // Reset the model-view matrix
+
+   	DrawAxes();
+	myprogram();
+
+  	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
+}
+void init() {
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glColor3f(0.0, 0.0, 0.0);
+   	glClearDepth(1.0f);                   // Set background depth to farthest
+   	glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+   	glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+   	glShadeModel(GL_SMOOTH);   // Enable smooth shading
+   	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+}
+void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
+// Compute aspect ratio of the new window
+   if (height == 0) height = 1;                // To prevent divide by 0
+   GLfloat aspect = (GLfloat)width / (GLfloat)height;
+ 
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+ 
+   // Set the aspect ratio of the clipping area to match the viewport
+   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+   glLoadIdentity();
+   if (width >= height) {
+     // aspect >= 1, set the height from -1 to 1, with larger width
+      gluOrtho2D(-1.0 * aspect, 1.0 * aspect, -1.0, 1.0);
+   } else {
+      // aspect < 1, set the width to -1 to 1, with larger height
+     gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
+   }
+}
+int main(int argc, char** argv)
+{
+	glutInit(&argc, argv);          // Initialize GLUT
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);	// Enable double buffering
+   	glutInitWindowSize(640, 480);   // Set the window's initial width & height - non-square
+   	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+   	glutCreateWindow("Model Transform");  // Create window with the given title
+   	glutDisplayFunc(display);       // Register callback handler for window re-paint event
+   	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+   	init();                       // Our own OpenGL initialization
+   	glutMainLoop();                 // Enter the infinite event-processing loop
+	return 0;
+}
+int myprogram(){
+	vec2cpp _ff = {0,0};
+	stack <actRecord> fRecords;
+	float lclVars[1024];
+	int lv_index = 0;
+	stack <int> lv_frameptr;
+	stack <int> lv_lastframeptr;
+	
+	vec2cpp v1;
+	float x;
+	float y;
+	int i;
+	float x2;
+	float y2;
+	int _t0;
+	int _t1;
+	vec2cpp _t2;
+	float _t3;
+	float _t4;
+	int _t5;
+	int _t6;
+	bool _t7;
+	float _t8;
+	vec2cpp _t9;
+	float _t10;
+	vec2cpp _t11;
+	vec2cpp _t12;
+	int _t13;
+	float _t14;
+	float _t15;
+	int _t16;
+	float _t17;
+	float _t18;
+	float _t19;
+	int _t20;
+	float _t21;
+	float _t22;
+	int _t23;
+	float _t24;
+	float _t25;
+	float _t26;
+	int _t27;
+	int _t28;
+
+	_t0 = 1;
+	_t1 = 0;
+	_t2.x = _t0;
+	_t2.y = _t1;
+	v1 = _t2;
+	_t3 = v1.x;
+	x = _t3;
+	_t4 = v1.y;
+	y = _t4;
+	_t5 = 4;
+	i = _t5;
+	_L11:
+	_t6 = 0;
+	_t7 = i > _t6;
+	if (!_t7) { goto _L10; }
+	_t8 = 0.5;
+	_t9.x = x;
+	_t9.y = y;
+	_t10 = sqrt((_t9.x * _t9.x + _t9.y * _t9.y));	
+_t9.x = _t9.x/_t10;
+_t9.y = _t9.y/_t10;
+_t11.x = _t8 * _t9.x + _ff.x;
+_t11.y = _t8 * _t9.y + _ff.y;
+glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex2f(_ff.x, _ff.y);
+	glVertex2f(_t11.x , _t11.y);
+glEnd();
+_ff.x = _t11.x;
+_ff.y = _t11.y;
+
+	_t12 = _ff;
+	_t13 = 90;
+	_t14 = cos(M_PI / 180 * _t13);
+	_t15 = _t14 * x;
+	_t16 = 90;
+	_t17 = sin(M_PI / 180 * _t16);
+	_t18 = _t17 * y;
+	_t19 = _t15 - _t18;
+	x2 = _t19;
+	_t20 = 90;
+	_t21 = sin(M_PI / 180 * _t20);
+	_t22 = _t21 * x;
+	_t23 = 90;
+	_t24 = cos(M_PI / 180 * _t23);
+	_t25 = _t24 * y;
+	_t26 = _t22 + _t25;
+	y2 = _t26;
 	x = x2;
 	y = y2;
-	int _t27 = 1;
-	int _t28 = i - _t27;
+	_t27 = 1;
+	_t28 = i - _t27;
 	i = _t28;
-	goto _L21;
-	}_L20:{
-	}
+	goto _L11;
+	_L10:
 
-
-	return 0;
+
+	return 0;
 }
-
